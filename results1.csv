@@ -1,0 +1,17 @@
+"Start Time","Track","Series","Hosted Session Name"
+"2026.01.11 1:00 AM GMT","Daytona International Speedway - Road Course","Hosted iRacing","Regiment Racing Series"
+
+
+
+"League Name","League ID","League Season","League Season ID","Points System"
+"Regiment Racing Series","13390","Regiment Season 1","128275","IMSA"
+
+"Fin Pos","Car ID","Car","Car Class ID","Car Class","Team ID","Cust ID","Name","Start Pos","Car #","Out ID","Out","Interval","Laps Led","Qualify Time","Average Lap Time","Fastest Lap Time","Fast Lap#","Laps Comp","Inc","League Points","Max Fuel Fill%","Weight Penalty (KG)","League Agg Points","AI"
+"1","169","Porsche 911 GT3 R (992)","4091","GT3 2025","265571","265571","Wendell Lowe","4","022","0","Running","-00.000","19","","1:48.671","1:47.250","25","25","4","350","100","0","378","0"
+"2","173","Ferrari 296 GT3","4091","GT3 2025","1081488","1081488","Glenn Jacobs4","5","713","0","Running","-22.246","0","","1:49.561","1:48.062","4","25","5","320","100","0","346","0"
+"3","184","Chevrolet Corvette Z06 GT3.R","4091","GT3 2025","920918","920918","Justin Noel","7","15","0","Running","-25.343","2","","1:49.685","1:45.494","18","25","4","300","100","0","324","0"
+"4","169","Porsche 911 GT3 R (992)","4091","GT3 2025","590611","590611","Raymond Samson","6","98","0","Running","-47.799","0","","1:50.583","1:48.287","14","25","8","280","100","0","305","0"
+"5","184","Chevrolet Corvette Z06 GT3.R","4091","GT3 2025","1030330","1030330","Damion Castro","2","215","0","Running","-55.851","0","","1:50.905","1:46.622","24","25","3","260","100","0","292","0"
+"6","173","Ferrari 296 GT3","4091","GT3 2025","1210077","1210077","Sean Bramer2","3","220","0","Running","-56.513","0","","1:50.932","1:48.067","7","25","12","250","100","0","280","0"
+"7","184","Chevrolet Corvette Z06 GT3.R","4091","GT3 2025","861077","861077","Tristan Lewis","1","7","0","Running","-1 L","4","","1:54.052","1:46.568","16","24","7","240","100","0","275","0"
+"8","185","Ford Mustang GT3","4091","GT3 2025","1343966","1343966","Exel Caraballo","8","787","0","Running","-4 L","0","","2:13.141","1:49.421","21","21","21","230","100","0","253","0"
