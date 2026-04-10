@@ -31,12 +31,10 @@ tr:hover{background:#111}
 </div>
 
 <script>
-// 🔥 AUTO LOAD CSV FILE
 fetch('results.csv')
 .then(res=>res.text())
 .then(text=>parseCSV(text));
 
-// ✅ PROPER CSV PARSER (handles quotes/commas correctly)
 function splitCSV(line) {
   const result = [];
   let current = '';
@@ -61,7 +59,13 @@ function splitCSV(line) {
 
 function parseCSV(text){
  const lines=text.trim().split('\n');
- const headers=splitCSV(lines.shift());
+
+ // 🔥 find actual header row (skip iRacing metadata at top)
+ let headerIndex = lines.findIndex(line => line.includes('Fin Pos'));
+ if(headerIndex === -1) return;
+
+ const headers=splitCSV(lines[headerIndex]);
+ const dataLines = lines.slice(headerIndex + 1);
 
  const getIndex=name=>headers.findIndex(h=>h.includes(name));
 
@@ -74,106 +78,18 @@ function parseCSV(text){
  const tbody=document.querySelector('#resultsTable tbody');
  tbody.innerHTML='';
 
- lines.forEach(line=>{
+ dataLines.forEach(line=>{
    const cols=splitCSV(line);
-   if(cols.length<5) return;
+
+   // skip empty or invalid rows
+   if(cols.length < 5) return;
+   if(!cols[posI] || isNaN(parseInt(cols[posI]))) return;
 
    let pos=parseInt(cols[posI]);
    let driver=cols[nameI].replace(/"/g,'').trim();
    let car=simplifyCar(cols[carI]);
-   let best=cols[bestI];
-   let inc=cols[incI];
-
-   let row=document.createElement('tr');
-
-   let posClass = pos===1?'p1':pos===2?'p2':pos===3?'p3':'';
-   let mpmDrivers=['Glenn Jacobs'];
-   let driverClass = mpmDrivers.includes(driver)?'mpm':'';
-
-   row.innerHTML=`
-     <td class="pos ${posClass}">${pos}</td>
-     <td class="${driverClass}">${driver}</td>
-     <td>${car}</td>
-     <td>${best}</td>
-     <td>${inc}</td>
-   `;
-
-   tbody.appendChild(row);
- });
-}
-
-function simplifyCar(car){
- if(!car) return '';
- if(car.includes('Porsche')) return 'Porsche';
- if(car.includes('Ford')) return 'Ford';
- if(car.includes('BMW')) return 'BMW';
- if(car.includes('Ferrari')) return 'Ferrari';
- return car;
-}
-</script>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MPM Results Dashboard</title>
-<style>
-body{margin:0;background:#0d0d0d;color:#fff;font-family:Arial}
-.container{max-width:1200px;margin:auto;padding:20px}
-h1{font-family:Arial Narrow, sans-serif;letter-spacing:2px}
-.table{width:100%;border-collapse:collapse}
-th,td{padding:10px;border-bottom:1px solid #222;text-align:left}
-th{color:#666;font-size:12px;text-transform:uppercase}
-tr:hover{background:#111}
-.pos{font-weight:bold}
-.p1{color:#e8c327}.p2{color:#aaa}.p3{color:#b87333}
-.mpm{color:#e8000d;font-weight:bold}
-</style>
-</head>
-<body>
-<div class="container">
-<h1>MID PACK MAFIA - RACE RESULTS</h1>
-<table class="table" id="resultsTable">
-<thead>
-<tr>
-<th>Pos</th><th>Driver</th><th>Car</th><th>Best Lap</th><th>INC</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-</div>
-
-<script>
-// 🔥 AUTO LOAD CSV FILE FROM SAME FOLDER
-fetch('results.csv')
-.then(res=>res.text())
-.then(text=>parseCSV(text));
-
-function parseCSV(text){
- const lines=text.trim().split('\n');
- const headers=lines.shift().split(',');
-
- const getIndex=name=>headers.findIndex(h=>h.includes(name));
-
- const posI=getIndex('Fin Pos');
- const nameI=getIndex('Name');
- const carI=getIndex('Car');
- const bestI=getIndex('Fastest Lap Time');
- const incI=getIndex('Inc');
-
- const tbody=document.querySelector('#resultsTable tbody');
- tbody.innerHTML='';
-
- lines.forEach(line=>{
-   const cols=line.split(',');
-   if(cols.length<5) return;
-
-   let pos=parseInt(cols[posI]);
-   let driver=cols[nameI].replace(/"/g,'');
-   let car=simplifyCar(cols[carI]);
-   let best=cols[bestI];
-   let inc=cols[incI];
+   let best=cols[bestI] || '';
+   let inc=cols[incI] || '';
 
    let row=document.createElement('tr');
 
