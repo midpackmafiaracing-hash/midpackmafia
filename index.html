@@ -155,6 +155,16 @@
     <div class="tab" onclick="switchTab('driverstats',this)">Driver Stats</div>
   </div>
 
+  <div style="padding:15px; background:#111; border-bottom:1px solid #222;">
+  <div style="font-size:12px; color:#888; margin-bottom:6px;">
+    Paste iRacing CSV (copy directly from file)
+  </div>
+  <textarea id="csvInput" style="width:100%; height:120px; background:#0d0d0d; color:#fff; border:1px solid #333; padding:10px;"></textarea>
+  <button onclick="loadCSV()" style="margin-top:8px; padding:8px 14px; background:#e8000d; border:none; color:#fff; cursor:pointer;">
+    Load CSV Results
+  </button>
+</div>
+  
   <div class="table-wrap">
     <div id="tab-results" class="tab-content active">
       <table class="results-table">
@@ -242,3 +252,61 @@ function switchTab(name,el){
   el.classList.add('active');
 }
 </script>
+
+function loadCSV() {
+  const raw = document.getElementById("csvInput").value.trim();
+  if (!raw) return;
+
+  const lines = raw.split("\n");
+
+  // remove header row
+  const headers = lines.shift().split(",");
+
+  const getIndex = (name) => headers.findIndex(h => h.includes(name));
+
+  const posIndex = getIndex("Fin Pos");
+  const nameIndex = getIndex("Name");
+  const carIndex = getIndex("Car");
+  const bestIndex = getIndex("Fastest Lap Time");
+  const incIndex = getIndex("Inc");
+  const gridIndex = getIndex("Start Pos");
+
+  let newData = [];
+
+  lines.forEach(line => {
+    const cols = line.split(",");
+
+    if (cols.length < 5) return;
+
+    newData.push({
+      pos: parseInt(cols[posIndex]),
+      driver: cols[nameIndex].replace(/"/g, "").trim(),
+      num: "#000",
+      car: simplifyCar(cols[carIndex]),
+      gap: cols[posIndex] == "1" ? "WINNER" : "",
+      led: 0,
+      best: cols[bestIndex],
+      avg: "",
+      laps: 0,
+      inc: parseInt(cols[incIndex]),
+      grid: parseInt(cols[gridIndex])
+    });
+  });
+
+  // replace data safely
+  data.length = 0;
+  newData.forEach(d => data.push(d));
+
+  renderAll();
+}
+
+function simplifyCar(car) {
+  if (!car) return "";
+
+  if (car.includes("Porsche")) return "Porsche";
+  if (car.includes("Ford")) return "Ford";
+  if (car.includes("BMW")) return "BMW";
+  if (car.includes("Ferrari")) return "Ferrari";
+
+  return car;
+}
