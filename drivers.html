@@ -13,52 +13,80 @@
       padding: 20px;
     }
 
+    h1 {
+      margin-bottom: 20px;
+    }
+
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
       gap: 20px;
     }
 
     .card {
       position: relative;
-      height: 180px;
+      height: 200px;
       cursor: pointer;
-      transition: 0.2s;
+      overflow: hidden;
     }
 
     .card:hover {
-      transform: scale(1.03);
+      transform: scale(1.02);
     }
 
+    /* CARD BACKGROUND */
     .bg {
+      position: absolute;
       width: 100%;
       height: 100%;
+      object-fit: cover;
+      z-index: 1;
     }
 
+    /* DARK GRADIENT FOR TEXT READABILITY */
+    .card::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 65%;
+      height: 100%;
+      background: linear-gradient(to right, rgba(0,0,0,0.8), transparent);
+      z-index: 2;
+    }
+
+    /* FLAG */
     .flag {
       position: absolute;
       top: 12px;
       left: 12px;
       width: 40px;
+      z-index: 5;
     }
 
+    /* DRIVER IMAGE */
     .driver-img {
       position: absolute;
-      right: 0;
+      right: 15px;
       bottom: 0;
-      height: 100%;
-      object-fit: cover;
+      height: 85%;
+      max-width: 45%;
+      object-fit: contain;
+      z-index: 3;
     }
 
+    /* TEXT INFO */
     .info {
       position: absolute;
       left: 15px;
-      bottom: 50px;
+      bottom: 65px;
+      z-index: 6;
     }
 
     .number {
       color: #ff0000;
       font-weight: 700;
+      font-size: 14px;
     }
 
     .name {
@@ -66,25 +94,28 @@
       font-weight: 700;
     }
 
+    /* STATS / SIMS */
     .stats {
       position: absolute;
-      bottom: 10px;
+      bottom: 15px;
       left: 15px;
-      display: flex;
-      gap: 10px;
       font-size: 12px;
+      opacity: 0.85;
+      z-index: 6;
     }
 
+    /* MODAL */
     .modal {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.85);
+      background: rgba(0,0,0,0.9);
       display: flex;
       justify-content: center;
       align-items: center;
+      z-index: 999;
     }
 
     .modal-content {
@@ -126,7 +157,9 @@ async function loadDrivers() {
     card.innerHTML = `
       <img class="bg" src="images/ui/mpm-card.png">
 
-      <img class="flag" src="https://flagcdn.com/w40/${driver.country}.png">
+      <img class="flag"
+           src="https://flagcdn.com/w40/${driver.country}.png"
+           onerror="this.style.display='none'">
 
       <img class="driver-img" src="${driver.driver_image}">
 
@@ -136,8 +169,8 @@ async function loadDrivers() {
       </div>
 
       <div class="stats">
-  <div>${driver.sims}</div>
-</div>
+        ${driver.sims}
+      </div>
     `;
 
     card.onclick = () => openModal(driver);
@@ -147,7 +180,8 @@ async function loadDrivers() {
 }
 
 function openModal(driver) {
-  const highlights = driver.highlights.split(";").join("<br>");
+
+  const highlights = (driver.highlights || "").split(";").join("<br>");
 
   const modal = document.createElement("div");
   modal.className = "modal";
@@ -156,7 +190,7 @@ function openModal(driver) {
     <div class="modal-content">
       <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
 
-      <img src="${driver.image}" style="width:100%; border-radius:8px;">
+      <img src="${driver.image}" style="width:100%; border-radius:8px; margin-bottom:10px;">
 
       <h2>#${driver.number} ${driver.name}</h2>
 
