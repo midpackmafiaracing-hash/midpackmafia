@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>MPM Drivers</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
@@ -23,18 +24,22 @@
       gap: 20px;
     }
 
+    /* CARD */
     .card {
       position: relative;
       height: 200px;
-      cursor: pointer;
       overflow: hidden;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
     }
 
     .card:hover {
       transform: scale(1.02);
+      box-shadow: 0 0 15px rgba(255,0,0,0.4);
     }
 
-    /* CARD BACKGROUND */
+    /* BACKGROUND CARD IMAGE */
     .bg {
       position: absolute;
       width: 100%;
@@ -43,7 +48,7 @@
       z-index: 1;
     }
 
-    /* DARK GRADIENT FOR TEXT READABILITY */
+    /* DARK FADE FOR TEXT */
     .card::after {
       content: "";
       position: absolute;
@@ -51,7 +56,7 @@
       top: 0;
       width: 65%;
       height: 100%;
-      background: linear-gradient(to right, rgba(0,0,0,0.8), transparent);
+      background: linear-gradient(to right, rgba(0,0,0,0.85), transparent);
       z-index: 2;
     }
 
@@ -61,47 +66,48 @@
       top: 12px;
       left: 12px;
       width: 40px;
-      z-index: 5;
+      z-index: 6;
     }
 
     /* DRIVER IMAGE */
     .driver-img {
       position: absolute;
-      right: 15px;
+      right: 0;
       bottom: 0;
-      height: 85%;
-      max-width: 45%;
+      height: 95%;
+      max-width: 48%;
       object-fit: contain;
       z-index: 3;
+      pointer-events: none;
     }
 
-    /* TEXT INFO */
+    /* TEXT BLOCK */
     .info {
       position: absolute;
-      left: 15px;
-      bottom: 65px;
-      z-index: 6;
+      left: 20px;
+      bottom: 70px;
+      z-index: 7;
     }
 
     .number {
       color: #ff0000;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 16px;
     }
 
     .name {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 700;
     }
 
-    /* STATS / SIMS */
+    /* SIMS / BOTTOM TEXT */
     .stats {
       position: absolute;
-      bottom: 15px;
-      left: 15px;
+      bottom: 18px;
+      left: 20px;
       font-size: 12px;
-      opacity: 0.85;
-      z-index: 6;
+      opacity: 0.9;
+      z-index: 7;
     }
 
     /* MODAL */
@@ -158,18 +164,20 @@ async function loadDrivers() {
       <img class="bg" src="images/ui/mpm-card.png">
 
       <img class="flag"
-           src="https://flagcdn.com/w40/${driver.country}.png"
+           src="https://flagcdn.com/w40/${(driver.country || "").toLowerCase()}.png"
            onerror="this.style.display='none'">
 
-      <img class="driver-img" src="${driver.driver_image}">
+      <img class="driver-img"
+           src="${driver.driver_image}"
+           onerror="this.style.display='none'">
 
       <div class="info">
-        <div class="number">#${driver.number}</div>
-        <div class="name">${driver.name}</div>
+        <div class="number">#${driver.number || ""}</div>
+        <div class="name">${driver.name || ""}</div>
       </div>
 
       <div class="stats">
-        ${driver.sims}
+        ${driver.sims || ""}
       </div>
     `;
 
@@ -190,17 +198,17 @@ function openModal(driver) {
     <div class="modal-content">
       <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
 
-      <img src="${driver.image}" style="width:100%; border-radius:8px; margin-bottom:10px;">
+      <img src="${driver.image || ""}" style="width:100%; border-radius:8px; margin-bottom:10px;">
 
-      <h2>#${driver.number} ${driver.name}</h2>
+      <h2>#${driver.number || ""} ${driver.name || ""}</h2>
 
-      <p><strong>Time in MPM:</strong> ${driver.time_in_mpm}</p>
-      <p><strong>Location:</strong> ${driver.location}</p>
-      <p><strong>Age:</strong> ${driver.age}</p>
-      <p><strong>Experience:</strong> ${driver.experience}</p>
-      <p><strong>Preferred Sims:</strong> ${driver.sims}</p>
-      <p><strong>Current Car:</strong> ${driver.car}</p>
-      <p><strong>Driving Style:</strong> ${driver.style}</p>
+      <p><strong>Time in MPM:</strong> ${driver.time_in_mpm || ""}</p>
+      <p><strong>Location:</strong> ${driver.location || ""}</p>
+      <p><strong>Age:</strong> ${driver.age || ""}</p>
+      <p><strong>Experience:</strong> ${driver.experience || ""}</p>
+      <p><strong>Preferred Sims:</strong> ${driver.sims || ""}</p>
+      <p><strong>Current Car:</strong> ${driver.car || ""}</p>
+      <p><strong>Driving Style:</strong> ${driver.style || ""}</p>
 
       <p><strong>Highlights:</strong><br>${highlights}</p>
     </div>
