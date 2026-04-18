@@ -1,160 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MPM Results (Google Sheets)</title>
-<link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700&display=swap" rel="stylesheet">
-<style>
-body{margin:0;background:#0b0b0b;color:#fff;font-family:'Saira',sans-serif}
-.container{max-width:1200px;margin:auto;padding:20px}
-h1{font-weight:700;font-size:48px;letter-spacing:3px;margin-bottom:5px;border-bottom:2px solid #ff2a2a;padding-bottom:5px}
-.subhead{display:none}
-.stats{display:flex;gap:15px;margin-bottom:20px}
-.stat{flex:1;background:#111;padding:10px;border-left:3px solid #ff2a2a}
-.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;margin-bottom:25px}
-.card{background:#111;padding:15px;text-align:center;border-radius:6px;border-top:4px solid}
-.gold{border-color:#e8c327}.silver{border-color:#aaa}.bronze{border-color:#b87333}
-.table{width:100%;border-collapse:collapse;background:#0f0f0f;border-radius:6px;overflow:hidden}
-th,td{padding:12px;border-bottom:1px solid #1f1f1f;text-align:left}
-th{color:#777;font-size:12px;text-transform:uppercase;font-weight:700}
-tr:hover{background:#151515}
-.pos{font-weight:700}
-.p1{color:#e8c327}.p2{color:#aaa}.p3{color:#b87333}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mid Pack Mafia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Saira', sans-serif; background: #000; color: #fff; }
+    nav {
+      background: #000;
+      border-bottom: 3px solid #ff0000;
+      padding: 0 2.5rem;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-wordmark {
+      font-weight: 800;
+      font-size: 26px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fff;
+      text-decoration: none;
+    }
+    .nav-wordmark span { color: #ff0000; }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-weight: 700;
+      font-size: 12px;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .nav-links a:hover, .nav-links a.active { color: #ff0000; }
+    .hero {
+      padding: 5rem 2rem 4rem;
+      border-bottom: 1px solid #1a1a1a;
+      text-align: center;
+      background: linear-gradient(180deg, #060606 0%, #000 100%);
+    }
+    .hero-inner { max-width: 900px; margin: 0 auto; }
+    .hero-kicker {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #ff0000;
+      margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-size: 56px;
+      line-height: 1;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .hero h1 span { color: #ff0000; }
+    .hero p {
+      max-width: 700px;
+      margin: 0 auto;
+      color: #aaa;
+      line-height: 1.8;
+      font-size: 16px;
+    }
+    .grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      background: #0a0a0a;
+    }
+    .card {
+      background: #000;
+      border: 1px solid #1a1a1a;
+      padding: 1.5rem;
+      min-height: 220px;
+    }
+    .card-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #ff0000;
+      margin-bottom: 1rem;
+    }
+    .card h2 {
+      font-size: 24px;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .card p {
+      color: #999;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+    footer {
+      background: #000;
+      border-top: 3px solid #ff0000;
+      padding: 2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .footer-copy { font-size: 12px; color: #444; letter-spacing: 0.08em; }
+    .footer-tagline {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #ff0000;
+    }
+    @media (max-width: 800px) {
+      nav, footer { padding-left: 1rem; padding-right: 1rem; }
+      nav { height: auto; padding-top: 1rem; padding-bottom: 1rem; flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .nav-links { flex-wrap: wrap; gap: 14px; }
+      .hero h1 { font-size: 38px; }
+      .grid { padding-left: 1rem; padding-right: 1rem; }
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-<h1>REGIMENT IRACING SERIES RACE RESULTS</h1>
-<select id="raceSelect"></select>
-<div class="stats" id="stats"></div>
-<div class="podium" id="podium"></div>
-<table class="table">
-<thead>
-<tr><th>Pos</th><th>Driver</th><th>Car</th><th>Best Lap</th><th>INC</th><th>Pts</th></tr>
-</thead>
-<tbody id="tbody"></tbody>
-</table>
-</div>
+  <nav>
+    <a class="nav-wordmark" href="index.html">MID PACK <span>MAFIA</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="drivers.html">Drivers</a></li>
+      <li><a href="series.html">Series</a></li>
+      <li><a href="results.html">Results</a></li>
+      <li><a href="media.html">Media</a></li>
+      <li><a href="calendar.html">Calendar</a></li>
+    </ul>
+  </nav>
 
-<script>
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRQCL6lcyz4O7a7UJ0CJyDBIu0Czab1KD-koV1gINjGWPgKbIn-yyegmU5N-q9iMtMiPzky3rWM7Fo/pub?output=csv';
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-kicker">Sim Racing Community</div>
+      <h1>Mid Pack <span>Mafia</span></h1>
+      <p>Mid Pack Mafia is a sim racing community built around fellowship, competition, and the grind to get better together. We race hard, learn fast, and keep showing up.</p>
+    </div>
+  </section>
 
-let allData = [];
+  <section class="grid">
+    <div class="card">
+      <div class="card-label">Drivers</div>
+      <h2>Roster</h2>
+      <p>Meet the drivers behind MPM and follow the people putting in the laps every week.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Series</div>
+      <h2>Championships</h2>
+      <p>Track the leagues and events we compete in across our favorite sims and platforms.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Results</div>
+      <h2>Race Recaps</h2>
+      <p>See standings, results, and updates as the season develops.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Calendar</div>
+      <h2>Schedule</h2>
+      <p>Keep up with upcoming races and subscribe to the shared MPM calendar.</p>
+    </div>
+  </section>
 
-fetch(SHEET_URL)
-.then(r=>r.text())
-.then(text=>{
-  const lines = text.trim().split('\n');
-
-  function splitCSV(line){
-    let res=[],cur='',q=false;
-    for(let c of line){
-      if(c==='"') q=!q;
-      else if(c===','&&!q){res.push(cur);cur='';}
-      else cur+=c;
-    }
-    res.push(cur);
-    return res;
-  }
-
-  let headers = splitCSV(lines[0]).map(h=>h.trim());
-  const getIndex = (name)=>headers.findIndex(h=>h.toLowerCase().includes(name.toLowerCase()));
-
-  const raceI = getIndex('Race');
-  const posI = getIndex('Fin Pos') !== -1 ? getIndex('Fin Pos') : getIndex('Pos');
-  const nameI = getIndex('Name');
-  const carI = getIndex('Car');
-  const bestI = getIndex('Fastest Lap Time');
-  const incI = getIndex('Inc');
-  const ptsI = getIndex('Points') !== -1 ? getIndex('Points') : getIndex('League Points');
-  
-
-  for(let i=1;i<lines.length;i++){
-    const row = splitCSV(lines[i]);
-    if(!row[posI] || isNaN(parseInt(row[posI]))) continue;
-
-    allData.push({
-      race: row[raceI],
-      pos: parseInt(row[posI]),
-      driver: row[nameI],
-      car: simplifyCar(row[carI]),
-      best: row[bestI],
-      inc: parseInt(row[incI]),
-      pts: row[ptsI]
-    });
-  }
-
-  initRaces();
-});
-
-function initRaces(){
-  const races = [...new Set(allData.map(r=>r.race))];
-  const select = document.getElementById('raceSelect');
-
-  races.forEach(r=>{
-    let opt=document.createElement('option');
-    opt.value=r;
-    opt.textContent=r;
-    select.appendChild(opt);
-  });
-
-  select.onchange = loadRace;
-  loadRace();
-}
-
-function loadRace(){
-  const race = document.getElementById('raceSelect').value;
-  const filtered = allData.filter(r=>r.race===race);
-  filtered.sort((a,b)=>a.pos-b.pos);
-
-  if(filtered.length===0) return;
-
-  let fastest = filtered.reduce((a,b)=>a.best<b.best?a:b);
-  let cleanest = filtered.reduce((a,b)=>a.inc<b.inc?a:b);
-
-  document.getElementById('stats').innerHTML=`
-    <div class="stat">⚡ Fastest Lap<br>${fastest.driver} (${fastest.best})</div>
-    <div class="stat">🧼 Cleanest<br>${cleanest.driver} (${cleanest.inc}x)</div>
-  `;
-
-  let podium=document.getElementById('podium');
-  podium.innerHTML='';
-  ['gold','silver','bronze'].forEach((c,i)=>{
-    let r=filtered[i];
-    if(!r) return;
-    podium.innerHTML+=`<div class="card ${c}">
-      <div>#${r.pos}</div>
-      <div>${r.driver}</div>
-      <div>${r.car}</div>
-    </div>`;
-  });
-
-  let tbody=document.getElementById('tbody');
-  tbody.innerHTML='';
-
-  filtered.forEach(r=>{
-    tbody.innerHTML+=`<tr>
-      <td class="pos ${r.pos<=3?'p'+r.pos:''}">${r.pos}</td>
-      <td>${r.driver}</td>
-      <td>${r.car}</td>
-      <td>${r.best}</td>
-      <td>${r.inc}</td>
-      <td>${r.pts}</td>
-    </tr>`;
-  });
-}
-
-function simplifyCar(car){
-  if(!car) return '';
-  let c = car.toLowerCase();
-  if(c.includes('porsche')) return 'Porsche 992 GT3 R';
-  if(c.includes('ferrari')) return 'Ferrari 296 GT3';
-  if(c.includes('corvette')) return 'Corvette Z06 GT3.R';
-  if(c.includes('ford')) return 'Ford Mustang GT3';
-  if(c.includes('bmw')) return 'BMW M4 GT3 EVO';
-  return car;
-}
-</script>
+  <footer>
+    <div class="footer-copy">&copy; 2025 Mid Pack Mafia. All rights reserved.</div>
+    <div class="footer-tagline">Respect the Process. Fear the Results.</div>
+  </footer>
 </body>
 </html>
