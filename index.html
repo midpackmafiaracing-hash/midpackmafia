@@ -7,10 +7,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Saira', sans-serif; background: #000000; color: #ffffff; }
+    body { font-family: 'Saira', sans-serif; background: #000; color: #fff; }
 
     nav {
-      background: #000000;
+      background: #000;
       border-bottom: 3px solid #ff0000;
       padding: 0 2.5rem;
       height: 72px;
@@ -19,66 +19,64 @@
       justify-content: space-between;
     }
     .nav-wordmark {
+      font-family: 'Saira', sans-serif;
       font-weight: 800;
       font-size: 26px;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: #ffffff;
+      color: #fff;
       text-decoration: none;
-      line-height: 1;
     }
     .nav-wordmark span { color: #ff0000; }
     .nav-links { display: flex; gap: 28px; list-style: none; }
     .nav-links a {
+      font-family: 'Saira', sans-serif;
       font-weight: 700;
       font-size: 12px;
-      color: #ffffff;
+      color: #fff;
       text-decoration: none;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      transition: color 0.2s;
     }
     .nav-links a:hover, .nav-links a.active { color: #ff0000; }
 
     .hero {
-      background: linear-gradient(180deg, #050505 0%, #000000 100%);
+      background: #000;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 5rem 2rem 4rem;
+      padding: 4rem 2rem 3rem;
       text-align: center;
       border-bottom: 1px solid #1a1a1a;
     }
-    .hero-inner { max-width: 760px; }
-    .hero-kicker {
-      font-weight: 700;
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #ff0000;
-      margin-bottom: 1rem;
+    .hero-logo {
+      width: 340px;
+      max-width: 90%;
+      margin-bottom: 2.5rem;
     }
-    .hero-title {
-      font-weight: 800;
-      font-size: 58px;
-      line-height: 0.95;
-      text-transform: uppercase;
-      margin-bottom: 1.25rem;
+    .hero-divider {
+      width: 60px;
+      height: 3px;
+      background: #ff0000;
+      margin: 0 auto 2.5rem;
     }
-    .hero-title span { color: #ff0000; }
-    .hero-divider { width: 64px; height: 3px; background: #ff0000; margin: 0 auto 2rem; }
     .hero-intro {
+      font-family: 'Saira', sans-serif;
       font-weight: 400;
       font-size: 16px;
-      color: #ffffff;
+      color: #fff;
       line-height: 1.8;
       max-width: 680px;
-      margin: 0 auto;
     }
 
-    .pillars { background: #0a0a0a; padding: 4rem 2rem; border-bottom: 1px solid #1a1a1a; }
+    .pillars {
+      background: #0a0a0a;
+      padding: 4rem 2rem;
+      border-bottom: 1px solid #1a1a1a;
+    }
     .pillars-heading {
+      font-family: 'Saira', sans-serif;
       font-weight: 800;
       font-size: 11px;
       letter-spacing: 0.2em;
@@ -95,27 +93,42 @@
       max-width: 900px;
       margin: 0 auto;
     }
-    .pillar { background: #0a0a0a; padding: 2rem 1.5rem; text-align: center; }
-    .pillar-icon { width: 36px; height: 3px; background: #ff0000; margin: 0 auto 1.25rem; }
+    .pillar {
+      background: #0a0a0a;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    .pillar-icon {
+      width: 36px;
+      height: 3px;
+      background: #ff0000;
+      margin: 0 auto 1.25rem;
+    }
     .pillar-title {
+      font-family: 'Saira', sans-serif;
       font-weight: 700;
       font-size: 14px;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #ffffff;
+      color: #fff;
       margin-bottom: 0.75rem;
     }
     .pillar-text {
+      font-family: 'Saira', sans-serif;
       font-weight: 400;
       font-size: 13px;
-      color: #ffffff;
-      opacity: 0.72;
+      color: #888;
       line-height: 1.7;
     }
 
-    .about { background: #000000; padding: 4rem 2rem; border-bottom: 1px solid #1a1a1a; }
+    .about {
+      background: #000;
+      padding: 4rem 2rem;
+      border-bottom: 1px solid #1a1a1a;
+    }
     .about-inner { max-width: 800px; margin: 0 auto; }
     .section-label {
+      font-family: 'Saira', sans-serif;
       font-weight: 700;
       font-size: 11px;
       letter-spacing: 0.2em;
@@ -128,27 +141,32 @@
     }
     .section-label::after { content: ''; flex: 1; height: 1px; background: #1a1a1a; }
     .section-heading {
+      font-family: 'Saira', sans-serif;
       font-weight: 800;
       font-size: 36px;
-      color: #ffffff;
+      color: #fff;
       line-height: 1.1;
       margin-bottom: 1.5rem;
       text-transform: uppercase;
     }
     .section-heading span { color: #ff0000; }
     .about-text {
+      font-family: 'Saira', sans-serif;
       font-weight: 400;
       font-size: 15px;
-      color: #ffffff;
-      opacity: 0.76;
+      color: #aaa;
       line-height: 1.85;
       margin-bottom: 1.25rem;
     }
-    .about-text.strong { color: #ffffff; opacity: 1; font-weight: 700; }
 
-    .sims { background: #0a0a0a; padding: 3rem 2rem; border-bottom: 1px solid #1a1a1a; }
+    .sims {
+      background: #0a0a0a;
+      padding: 3rem 2rem;
+      border-bottom: 1px solid #1a1a1a;
+    }
     .sims-inner { max-width: 800px; margin: 0 auto; }
     .sims-label {
+      font-family: 'Saira', sans-serif;
       font-weight: 700;
       font-size: 11px;
       letter-spacing: 0.2em;
@@ -158,18 +176,18 @@
     }
     .sims-row { display: flex; gap: 12px; flex-wrap: wrap; }
     .sim-badge {
+      font-family: 'Saira', sans-serif;
       font-weight: 700;
       font-size: 12px;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      border: 1px solid #333333;
-      color: #ffffff;
+      border: 1px solid #ff0000;
+      color: #ff0000;
       padding: 10px 20px;
     }
-    .sim-badge.active { border-color: #ff0000; color: #ff0000; }
 
     footer {
-      background: #000000;
+      background: #000;
       border-top: 3px solid #ff0000;
       padding: 2rem 2.5rem;
       display: flex;
@@ -179,32 +197,19 @@
       gap: 1rem;
     }
     .footer-copy {
+      font-family: 'Saira', sans-serif;
       font-weight: 400;
       font-size: 12px;
-      color: #ffffff;
-      opacity: 0.28;
+      color: #444;
       letter-spacing: 0.08em;
     }
     .footer-tagline {
+      font-family: 'Saira', sans-serif;
       font-weight: 700;
       font-size: 11px;
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: #ff0000;
-    }
-
-    @media (max-width: 800px) {
-      nav, .hero, .pillars, .about, .sims, footer { padding-left: 1rem; padding-right: 1rem; }
-      nav {
-        height: auto;
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-      }
-      .nav-links { flex-wrap: wrap; gap: 14px; }
-      .hero-title { font-size: 40px; }
     }
   </style>
 </head>
@@ -223,12 +228,9 @@
 </nav>
 
 <section class="hero">
-  <div class="hero-inner">
-    <div class="hero-kicker">Sim Racing Community</div>
-    <h1 class="hero-title">Mid Pack <span>Mafia</span></h1>
-    <div class="hero-divider"></div>
-    <p class="hero-intro">Mid Pack Mafia is a sim racing community built around fellowship, competition, and the grind to "Git Good" across multiple platforms, including Le Mans Ultimate, Assetto Corsa Competizione, and iRacing.</p>
-  </div>
+  <img class="hero-logo" src="/images/Logo_transparent.png" alt="Mid Pack Mafia Logo">
+  <div class="hero-divider"></div>
+  <p class="hero-intro">Mid Pack Mafia is a sim racing community built around fellowship, competition, and the grind to "Git Good" across multiple platforms, including Le Mans Ultimate, Assetto Corsa Competizione, and iRacing.</p>
 </section>
 
 <section class="pillars">
@@ -242,24 +244,24 @@
     <div class="pillar">
       <div class="pillar-icon"></div>
       <div class="pillar-title">Competition</div>
-      <div class="pillar-text">Whether fighting for podiums or surviving chaos and bringing the car home clean, we show up and put in the work.</div>
+      <div class="pillar-text">Whether fighting for podiums or surviving chaos and bringing the car home clean — we show up and put in the work.</div>
     </div>
     <div class="pillar">
       <div class="pillar-icon"></div>
       <div class="pillar-title">The Grind</div>
-      <div class="pillar-text">Very few drivers show up fast right out of the gate. We're here for the process, putting in laps and closing the gap.</div>
+      <div class="pillar-text">Very few drivers show up fast right out of the gate. We're here for the process — putting in laps and closing the gap.</div>
     </div>
   </div>
 </section>
 
 <section class="about">
   <div class="about-inner">
-    <div class="section-label">Our Story</div>
+    <div class="section-label">Our story</div>
     <h2 class="section-heading">Welcome to <span>the Family</span></h2>
-    <p class="about-text">We've learned that while turning laps on your own has its place, nothing compares to being on track with people who are willing to race you hard and help you improve at the same time. Whether it's sharing setups, talking through mistakes, or just pushing each other to be better, that's where real progress happens.</p>
-    <p class="about-text">At MPM, we believe you get out of sim racing what you put into it. Very few drivers show up fast right out of the gate, and honestly, that's not what we're about anyway. We're here for the process: putting in the laps, learning from each race, and gradually closing the gap.</p>
+    <p class="about-text">We've learned that while turning laps on your own has its place, nothing compares to being on track with people who are willing to race you hard and help you improve at the same time. Whether it's sharing setups, talking through mistakes, or just pushing each other to be better — that's where real progress happens.</p>
+    <p class="about-text">At MPM, we believe you get out of sim racing what you put into it. Very few drivers show up fast right out of the gate — and honestly, that's not what we're about anyway. We're here for the process: putting in the laps, learning from each race, and gradually closing the gap.</p>
     <p class="about-text">Some days it's about fighting for podiums. Other days it's about surviving the chaos and bringing the car home clean. Either way, we show up, put in the work, and keep moving forward.</p>
-    <p class="about-text strong">If you're willing to learn, compete, and enjoy the ride along the way, you'll fit right in.</p>
+    <p class="about-text" style="color:#fff; font-weight:700;">If you're willing to learn, compete, and enjoy the ride along the way — you'll fit right in.</p>
   </div>
 </section>
 
@@ -267,9 +269,9 @@
   <div class="sims-inner">
     <div class="sims-label">Platforms we race on</div>
     <div class="sims-row">
-      <div class="sim-badge active">iRacing</div>
-      <div class="sim-badge active">Assetto Corsa Competizione</div>
-      <div class="sim-badge active">Le Mans Ultimate</div>
+      <div class="sim-badge">iRacing</div>
+      <div class="sim-badge">Assetto Corsa Competizione</div>
+      <div class="sim-badge">Le Mans Ultimate</div>
     </div>
   </div>
 </section>
