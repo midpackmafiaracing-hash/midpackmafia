@@ -7,48 +7,366 @@
   <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Saira', sans-serif; background: #000; color: #fff; }
-    nav, footer { background: #000; padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-    nav { height: 72px; border-bottom: 3px solid #ff0000; }
-    footer { border-top: 3px solid #ff0000; padding: 2rem 2.5rem; margin-top: 4rem; }
-    .nav-wordmark, .nav-links a { color: #fff; text-decoration: none; text-transform: uppercase; }
-    .nav-wordmark { font-weight: 800; font-size: 26px; letter-spacing: 0.06em; }
-    .nav-wordmark span, .nav-links a:hover, .nav-links a.active, .eyebrow { color: #ff0000; }
-    .nav-links { list-style: none; display: flex; gap: 28px; }
-    .nav-links a { font-weight: 700; font-size: 12px; letter-spacing: 0.12em; }
-    .wrap { max-width: 960px; margin: 0 auto; padding: 4rem 2rem; }
-    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1rem; }
-    h1 { font-size: 48px; font-weight: 800; text-transform: uppercase; line-height: 1; margin-bottom: 1rem; }
-    p { max-width: 55ch; color: #aaa; line-height: 1.7; }
-    .card { margin-top: 2rem; border: 1px solid #1a1a1a; background: #0a0a0a; padding: 1.5rem; }
-    .footer-copy, .footer-tagline { font-size: 12px; letter-spacing: 0.08em; }
-    .footer-copy { color: #444; }
-    .footer-tagline { color: #ff0000; text-transform: uppercase; font-weight: 700; }
+    body { font-family: 'Saira', sans-serif; background: #000000; color: #ffffff; }
+
+    nav {
+      background: #000000;
+      border-bottom: 3px solid #ff0000;
+      padding: 0 2.5rem;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-wordmark {
+      font-weight: 800;
+      font-size: 26px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #ffffff;
+      text-decoration: none;
+      line-height: 1;
+    }
+    .nav-wordmark span { color: #ff0000; }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-weight: 700;
+      font-size: 12px;
+      color: #ffffff;
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: #ff0000; }
+
+    .page-header {
+      background: linear-gradient(180deg, #050505 0%, #000000 100%);
+      border-bottom: 1px solid #1a1a1a;
+      padding: 3rem 2.5rem 2.5rem;
+    }
+    .page-header-inner, .series-wrap { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #ff0000;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: #1a1a1a; }
+    .page-title {
+      font-weight: 800;
+      font-size: 48px;
+      line-height: 1;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .page-title span { color: #ff0000; }
+    .page-intro {
+      max-width: 740px;
+      font-weight: 400;
+      font-size: 15px;
+      line-height: 1.8;
+      color: #ffffff;
+      opacity: 0.76;
+    }
+
+    .series-wrap { padding: 3rem 2.5rem 0; }
+    .series-list {
+      display: grid;
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+    .series-card {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 2rem;
+      align-items: center;
+      background: #0a0a0a;
+      border: 1px solid #1a1a1a;
+      border-left: 3px solid #ff0000;
+      padding: 1.5rem;
+    }
+    .series-mark {
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000000;
+      border: 1px solid #1a1a1a;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .series-mark-text {
+      font-weight: 800;
+      font-size: 42px;
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+    .series-mark-text.accent { color: #ff0000; }
+    .series-mark-text.mix {
+      background: linear-gradient(90deg, #ff0000 0%, #ffffff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .series-mark-text.tracki { color: #ff0000; }
+
+    .series-name {
+      font-weight: 800;
+      font-size: 44px;
+      line-height: 1;
+      text-transform: uppercase;
+      color: #ff0000;
+      margin-bottom: 1rem;
+    }
+    .series-type {
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin-bottom: 1.25rem;
+    }
+    .series-copy {
+      font-weight: 400;
+      font-size: 15px;
+      line-height: 1.75;
+      color: #ffffff;
+      opacity: 0.8;
+      margin-bottom: 1.25rem;
+      max-width: 56ch;
+    }
+    .series-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .series-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ff0000;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: background 0.2s, color 0.2s;
+    }
+    .series-link:hover {
+      background: #ff0000;
+      color: #ffffff;
+    }
+    .series-link.muted {
+      border-color: #333333;
+      color: #ffffff;
+      opacity: 0.82;
+    }
+    .series-link.muted:hover {
+      background: #111111;
+      color: #ffffff;
+    }
+    .series-meta {
+      display: grid;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .series-meta-line {
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #ffffff;
+      opacity: 0.84;
+    }
+    .series-meta-line strong {
+      font-weight: 700;
+      color: #ffffff;
+      opacity: 1;
+    }
+
+    footer {
+      background: #000000;
+      border-top: 3px solid #ff0000;
+      padding: 2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 4rem;
+    }
+    .footer-copy {
+      font-weight: 400;
+      font-size: 12px;
+      color: #ffffff;
+      opacity: 0.28;
+      letter-spacing: 0.08em;
+    }
+    .footer-tagline {
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #ff0000;
+    }
+
+    @media (max-width: 900px) {
+      .series-card { grid-template-columns: 1fr; }
+      .series-mark { min-height: 160px; }
+      .series-name { font-size: 34px; }
+    }
+
+    @media (max-width: 800px) {
+      nav, .page-header, .series-wrap, footer { padding-left: 1rem; padding-right: 1rem; }
+      nav {
+        height: auto;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .nav-links { flex-wrap: wrap; gap: 14px; }
+      .page-title { font-size: 34px; }
+      .series-mark-text { font-size: 34px; }
+    }
   </style>
 </head>
 <body>
-  <nav>
-    <a class="nav-wordmark" href="index.html">MID PACK <span>MAFIA</span></a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="drivers.html">Drivers</a></li>
-      <li><a href="series.html" class="active">Series</a></li>
-      <li><a href="results.html">Results</a></li>
-      <li><a href="media.html">Media</a></li>
-      <li><a href="calendar.html">Calendar</a></li>
-    </ul>
-  </nav>
-  <main class="wrap">
-    <div class="eyebrow">Series</div>
-    <h1>Current Series</h1>
-    <p>This placeholder keeps the site navigation working cleanly while you build out the series pages.</p>
-    <div class="card">
-      A good next step here would be separate sections for NRUS, TrakFiends, and Regiment.
-    </div>
-  </main>
-  <footer>
-    <div class="footer-copy">&copy; 2025 Mid Pack Mafia. All rights reserved.</div>
-    <div class="footer-tagline">Respect the Process. Fear the Results.</div>
-  </footer>
+
+<nav>
+  <a class="nav-wordmark" href="index.html">MID PACK <span>MAFIA</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="drivers.html">Drivers</a></li>
+    <li><a href="series.html" class="active">Series</a></li>
+    <li><a href="results.html">Results</a></li>
+    <li><a href="media.html">Media</a></li>
+    <li><a href="calendar.html">Calendar</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="section-label">Communities</div>
+    <h1 class="page-title">Series We <span>Race In</span></h1>
+    <p class="page-intro">Mid Pack Mafia races alongside a handful of communities that give our drivers places to compete, improve, and stay plugged into the wider sim racing scene. These are the leagues and groups currently in our orbit.</p>
+  </div>
+</div>
+
+<div class="series-wrap">
+  <div class="series-list">
+    <section class="series-card">
+      <div class="series-mark">
+        <div class="series-mark-text mix">TrakFiends X<br>Mid Pack Mafia</div>
+      </div>
+      <div>
+        <h2 class="series-name">TrakFiends X Mid Pack Mafia</h2>
+        <div class="series-type">iRacing Series</div>
+        <div class="series-meta">
+          <div class="series-meta-line"><strong>League #:</strong> 14276</div>
+          <div class="series-meta-line"><strong>Focus:</strong> Collaborative iRacing competition between both communities.</div>
+        </div>
+        <p class="series-copy">This shared series represents one of the clearest partnerships on the schedule. It gives MPM drivers a place to race hard, stay connected with TrakFiends, and sharpen racecraft in organized iRacing competition.</p>
+        <div class="series-links">
+          <a class="series-link muted" href="#">MPM Discord</a>
+          <a class="series-link" href="#">TrakFiends Discord</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="series-card">
+      <div class="series-mark">
+        <div class="series-mark-text accent">NRUS</div>
+      </div>
+      <div>
+        <h2 class="series-name">Noobs "R" Us</h2>
+        <div class="series-type">ACC &amp; LMU Series</div>
+        <div class="series-meta">
+          <div class="series-meta-line"><strong>Platform:</strong> SimGrid-hosted events and community racing.</div>
+          <div class="series-meta-line"><strong>Focus:</strong> Assetto Corsa Competizione and Le Mans Ultimate competition.</div>
+        </div>
+        <p class="series-copy">NRUS gives the team another strong home for organized racing outside iRacing. It is a valuable part of the MPM mix for drivers who want structured ACC and LMU events while staying active with another established community.</p>
+        <div class="series-links">
+          <a class="series-link" href="#">NRUS on SimGrid</a>
+          <a class="series-link muted" href="#">NRUS Discord</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="series-card">
+      <div class="series-mark">
+        <div class="series-mark-text">TrakFiends</div>
+      </div>
+      <div>
+        <h2 class="series-name">TrakFiends</h2>
+        <div class="series-type">ACC &amp; iRacing Series</div>
+        <div class="series-meta">
+          <div class="series-meta-line"><strong>Platform:</strong> SimGrid and Discord community racing.</div>
+          <div class="series-meta-line"><strong>Focus:</strong> Multi-platform league activity with regular crossover opportunities.</div>
+        </div>
+        <p class="series-copy">Beyond the joint MPM series, TrakFiends is an important standalone community in the rotation. It offers another competitive outlet for drivers who want to stay busy across both ACC and iRacing events.</p>
+        <div class="series-links">
+          <a class="series-link" href="#">TF on SimGrid</a>
+          <a class="series-link muted" href="#">TrakFiends Discord</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="series-card">
+      <div class="series-mark">
+        <div class="series-mark-text">Regiment</div>
+      </div>
+      <div>
+        <h2 class="series-name">Regiment Gaming</h2>
+        <div class="series-type">iRacing Series</div>
+        <div class="series-meta">
+          <div class="series-meta-line"><strong>Platform:</strong> Website and Discord-based community racing.</div>
+          <div class="series-meta-line"><strong>Focus:</strong> Organized iRacing competition.</div>
+        </div>
+        <p class="series-copy">Regiment brings another iRacing community into the MPM ecosystem. It expands the team’s competitive schedule and gives drivers another strong league environment to race in throughout the season.</p>
+        <div class="series-links">
+          <a class="series-link" href="#">Regiment Website</a>
+          <a class="series-link muted" href="#">Regiment Discord</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="series-card">
+      <div class="series-mark">
+        <div class="series-mark-text tracki">Trackilicious</div>
+      </div>
+      <div>
+        <h2 class="series-name">Trackilicious</h2>
+        <div class="series-type">ACC, LMU &amp; iRacing Series</div>
+        <div class="series-meta">
+          <div class="series-meta-line"><strong>Platform:</strong> SimGrid and Discord community racing.</div>
+          <div class="series-meta-line"><strong>Focus:</strong> Cross-platform league opportunities for drivers who want variety.</div>
+        </div>
+        <p class="series-copy">Trackilicious rounds out the current list with a broad mix of series across multiple sims. It is another useful community touchpoint for MPM drivers who want to stay active in ACC, LMU, and iRacing.</p>
+        <div class="series-links">
+          <a class="series-link" href="#">Tracki on SimGrid</a>
+          <a class="series-link muted" href="#">Tracki Discord</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-copy">&copy; 2025 Mid Pack Mafia. All rights reserved.</div>
+  <div class="footer-tagline">Respect the Process. Fear the Results.</div>
+</footer>
+
 </body>
 </html>
