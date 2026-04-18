@@ -8,18 +8,20 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Saira', sans-serif; background: #000; color: #fff; }
+
     nav {
       background: #000;
       border-bottom: 3px solid #ff0000;
       padding: 0 2.5rem;
-      height: 72px;
+      height: 80px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
     .nav-wordmark {
+      font-family: 'Saira', sans-serif;
       font-weight: 800;
-      font-size: 26px;
+      font-size: 36px;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: #fff;
@@ -28,23 +30,26 @@
     .nav-wordmark span { color: #ff0000; }
     .nav-links { display: flex; gap: 28px; list-style: none; }
     .nav-links a {
+      font-family: 'Saira', sans-serif;
       font-weight: 700;
-      font-size: 12px;
+      font-size: 13px;
       color: #fff;
       text-decoration: none;
       letter-spacing: 0.12em;
       text-transform: uppercase;
     }
     .nav-links a:hover, .nav-links a.active { color: #ff0000; }
+
     .page-header {
       background: #000;
       border-bottom: 1px solid #1a1a1a;
       padding: 3rem 2.5rem 2.5rem;
     }
-    .page-header-inner, .subscribe-bar-inner { max-width: 1100px; margin: 0 auto; }
+    .page-header-inner { max-width: 1100px; margin: 0 auto; }
     .section-label {
+      font-family: 'Saira', sans-serif;
       font-weight: 700;
-      font-size: 11px;
+      font-size: 19px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: #ff0000;
@@ -55,18 +60,23 @@
     }
     .section-label::after { content: ''; flex: 1; height: 1px; background: #1a1a1a; }
     .page-title {
+      font-family: 'Saira', sans-serif;
       font-weight: 800;
       font-size: 48px;
       text-transform: uppercase;
+      color: #fff;
       line-height: 1;
     }
     .page-title span { color: #ff0000; }
+
     .subscribe-bar {
       background: #0a0a0a;
       border-bottom: 1px solid #1a1a1a;
       padding: 1.25rem 2.5rem;
     }
     .subscribe-bar-inner {
+      max-width: 1100px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -74,28 +84,39 @@
       gap: 1rem;
     }
     .subscribe-text {
+      font-family: 'Saira', sans-serif;
       font-weight: 700;
-      font-size: 12px;
+      font-size: 15px;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: #555;
     }
     .subscribe-btn {
+      font-family: 'Saira', sans-serif;
       font-weight: 700;
-      font-size: 11px;
+      font-size: 13px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       background: #ff0000;
       color: #fff;
       border: none;
-      padding: 10px 24px;
+      padding: 12px 28px;
+      cursor: pointer;
       text-decoration: none;
       display: inline-block;
     }
-    .calendar-wrap { max-width: 1100px; margin: 3rem auto; padding: 0 2.5rem; }
+    .subscribe-btn:hover { background: #cc0000; }
+
+    .calendar-wrap {
+      max-width: 1100px;
+      margin: 3rem auto;
+      padding: 0 2.5rem;
+    }
+
     .month-label {
+      font-family: 'Saira', sans-serif;
       font-weight: 800;
-      font-size: 13px;
+      font-size: 18px;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: #ff0000;
@@ -103,10 +124,12 @@
       padding-bottom: 0.5rem;
       border-bottom: 1px solid #1a1a1a;
     }
+
     .events-list { margin-bottom: 3rem; }
+
     .event-card {
       display: grid;
-      grid-template-columns: 80px 1fr auto;
+      grid-template-columns: 90px 1fr auto;
       align-items: center;
       gap: 1.5rem;
       background: #0a0a0a;
@@ -116,74 +139,84 @@
       margin-bottom: 8px;
     }
     .event-card:hover { background: #111; }
+
     .event-date-block {
       text-align: center;
       background: #000;
       border: 1px solid #222;
       padding: 0.5rem;
     }
-    .event-day { font-weight: 800; font-size: 28px; color: #ff0000; line-height: 1; }
+    .event-day {
+      font-family: 'Saira', sans-serif;
+      font-weight: 800;
+      font-size: 32px;
+      color: #ff0000;
+      line-height: 1;
+    }
     .event-weekday {
+      font-family: 'Saira', sans-serif;
       font-weight: 700;
-      font-size: 10px;
+      font-size: 12px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: #555;
       margin-top: 2px;
     }
-    .event-name { font-weight: 700; font-size: 16px; color: #fff; margin-bottom: 4px; }
+
+    .event-info { flex: 1; }
+    .event-name {
+      font-family: 'Saira', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: #fff;
+      margin-bottom: 6px;
+    }
     .event-meta {
+      font-family: 'Saira', sans-serif;
       font-weight: 400;
-      font-size: 12px;
+      font-size: 14px;
       color: #555;
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
     .event-meta span { color: #888; margin-right: 16px; }
+
     .event-badge {
+      font-family: 'Saira', sans-serif;
       font-weight: 700;
-      font-size: 10px;
+      font-size: 12px;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      padding: 4px 10px;
+      padding: 6px 14px;
       border: 1px solid #ff0000;
       color: #ff0000;
       white-space: nowrap;
     }
-    .loading, .error-msg {
-      text-align: center;
-      padding: 3rem 2rem;
-      background: #0a0a0a;
-      border: 1px solid #1a1a1a;
-    }
+    .event-badge.past { border-color: #333; color: #444; }
+
     .loading {
+      text-align: center;
+      padding: 4rem 2rem;
+      font-family: 'Saira', sans-serif;
       font-weight: 700;
-      font-size: 13px;
+      font-size: 15px;
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: #333;
     }
-    .loading span { color: #ff0000; }
-    .error-msg { font-size: 13px; color: #777; }
-    .fallback-shell {
+
+    .error-msg {
+      padding: 2rem;
+      font-family: 'Saira', sans-serif;
+      font-size: 15px;
+      color: #555;
+      border: 1px solid #1a1a1a;
       background: #0a0a0a;
-      border: 1px solid #1a1a1a;
-      padding: 1.5rem;
+      text-align: center;
+      line-height: 1.8;
     }
-    .fallback-copy {
-      font-size: 13px;
-      color: #888;
-      margin-bottom: 1rem;
-      line-height: 1.6;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-    .calendar-embed {
-      width: 100%;
-      min-height: 760px;
-      border: 1px solid #1a1a1a;
-      background: #000;
-    }
+    .error-msg a { color: #ff0000; text-decoration: none; font-weight: 700; }
+
     footer {
       background: #000;
       border-top: 3px solid #ff0000;
@@ -195,400 +228,189 @@
       gap: 1rem;
       margin-top: 4rem;
     }
-    .footer-copy { font-weight: 400; font-size: 12px; color: #444; letter-spacing: 0.08em; }
+    .footer-copy {
+      font-family: 'Saira', sans-serif;
+      font-weight: 400;
+      font-size: 13px;
+      color: #444;
+      letter-spacing: 0.08em;
+    }
     .footer-tagline {
+      font-family: 'Saira', sans-serif;
       font-weight: 700;
-      font-size: 11px;
+      font-size: 13px;
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: #ff0000;
     }
-    @media (max-width: 800px) {
-      nav, .page-header, .subscribe-bar, .calendar-wrap, footer { padding-left: 1rem; padding-right: 1rem; }
-      nav { height: auto; padding-top: 1rem; padding-bottom: 1rem; flex-direction: column; align-items: flex-start; gap: 1rem; }
-      .nav-links { flex-wrap: wrap; gap: 14px; }
-      .page-title { font-size: 34px; }
-      .event-card { grid-template-columns: 64px 1fr; }
-      .event-badge { grid-column: 1 / -1; justify-self: start; }
-    }
   </style>
 </head>
 <body>
-  <nav>
-    <a class="nav-wordmark" href="index.html">MID PACK <span>MAFIA</span></a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="drivers.html">Drivers</a></li>
-      <li><a href="series.html">Series</a></li>
-      <li><a href="results.html">Results</a></li>
-      <li><a href="media.html">Media</a></li>
-      <li><a href="calendar.html" class="active">Calendar</a></li>
-    </ul>
-  </nav>
 
-  <div class="page-header">
-    <div class="page-header-inner">
-      <div class="section-label">Schedule</div>
-      <h1 class="page-title">Race <span>Calendar</span></h1>
-    </div>
+<nav>
+  <a class="nav-wordmark" href="index.html">MID PACK <span>MAFIA</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="drivers.html">Drivers</a></li>
+    <li><a href="series.html">Series</a></li>
+    <li><a href="results.html">Results</a></li>
+    <li><a href="media.html">Media</a></li>
+    <li><a href="calendar.html" class="active">Calendar</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="section-label">Schedule</div>
+    <h1 class="page-title">Race <span>Calendar</span></h1>
   </div>
+</div>
 
-  <div class="subscribe-bar">
-    <div class="subscribe-bar-inner">
-      <div class="subscribe-text">Add MPM events to your personal calendar</div>
-      <a class="subscribe-btn" href="https://calendar.google.com/calendar/r?cid=midpackmafiaracing@gmail.com" target="_blank" rel="noopener noreferrer">Subscribe to Calendar</a>
-    </div>
+<div class="subscribe-bar">
+  <div class="subscribe-bar-inner">
+    <div class="subscribe-text">Add MPM events to your personal calendar</div>
+    <a class="subscribe-btn" href="https://calendar.google.com/calendar/r?cid=midpackmafiaracing@gmail.com" target="_blank">Subscribe to Calendar</a>
   </div>
+</div>
 
-  <div class="calendar-wrap">
-    <div id="calendar-output" class="loading">Loading race schedule<span>...</span></div>
-  </div>
+<div class="calendar-wrap">
+  <div id="calendar-output" class="loading">Loading race schedule...</div>
+</div>
 
-  <footer>
-    <div class="footer-copy">&copy; 2025 Mid Pack Mafia. All rights reserved.</div>
-    <div class="footer-tagline">Respect the Process. Fear the Results.</div>
-  </footer>
+<footer>
+  <div class="footer-copy">&copy; 2025 Mid Pack Mafia. All rights reserved.</div>
+  <div class="footer-tagline">Respect the Process. Fear the Results.</div>
+</footer>
 
-  <script>
-    const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const WEEKDAY_MAP = { SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6 };
+<script>
+  const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const CAL_ID = encodeURIComponent('midpackmafiaracing@gmail.com');
 
-    function escapeHtml(value) {
-      return String(value || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
-    function unfoldIcsLines(icsText) {
-      return icsText.replace(/\r?\n[ \t]/g, '');
-    }
-
-    function unescapeIcsText(value) {
-      return String(value || '')
-        .replace(/\\n/g, '\n')
-        .replace(/\\,/g, ',')
-        .replace(/\\;/g, ';')
-        .replace(/\\\\/g, '\\');
-    }
-
-    function parseIcal(icsText) {
-      const lines = unfoldIcsLines(icsText).split(/\r?\n/);
-      const events = [];
-      let current = null;
-
-      for (const line of lines) {
-        if (line === 'BEGIN:VEVENT') {
-          current = { exdates: [] };
-          continue;
-        }
-        if (line === 'END:VEVENT') {
-          if (current && current.summary && current.startRaw) events.push(current);
-          current = null;
-          continue;
-        }
-        if (!current) continue;
-
-        const colonIndex = line.indexOf(':');
-        if (colonIndex === -1) continue;
-        const rawKey = line.slice(0, colonIndex);
-        const rawValue = line.slice(colonIndex + 1);
-        const key = rawKey.split(';')[0];
-
-        if (key === 'SUMMARY') current.summary = unescapeIcsText(rawValue);
-        else if (key === 'LOCATION') current.location = unescapeIcsText(rawValue);
-        else if (key === 'DESCRIPTION') current.description = unescapeIcsText(rawValue);
-        else if (key === 'DTSTART') {
-          current.startRaw = rawValue;
-          current.allDay = rawKey.includes('VALUE=DATE');
-        } else if (key === 'DTEND') current.endRaw = rawValue;
-        else if (key === 'RRULE') current.rrule = rawValue;
-        else if (key === 'EXDATE') current.exdates.push(...rawValue.split(','));
-        else if (key === 'RECURRENCE-ID') current.recurrenceId = rawValue;
-      }
-
-      return events;
-    }
-
-    function parseDate(icalValue, allDay) {
-      if (!icalValue) return null;
-      if (allDay) {
-        const year = Number(icalValue.slice(0, 4));
-        const month = Number(icalValue.slice(4, 6)) - 1;
-        const day = Number(icalValue.slice(6, 8));
-        return new Date(year, month, day, 0, 0, 0, 0);
-      }
-
-      const match = icalValue.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})?(Z)?$/);
-      if (!match) return null;
-      const [, year, month, day, hour, minute, second = '00', isZulu] = match;
-
-      if (isZulu) {
-        return new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second)));
-      }
-
-      return new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second));
-    }
-
-    function addDays(date, days) {
-      const next = new Date(date.getTime());
-      next.setDate(next.getDate() + days);
-      return next;
-    }
-
-    function addMonths(date, months) {
-      const next = new Date(date.getTime());
-      const day = next.getDate();
-      next.setDate(1);
-      next.setMonth(next.getMonth() + months);
-      const maxDay = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
-      next.setDate(Math.min(day, maxDay));
-      return next;
-    }
-
-    function addYears(date, years) {
-      const next = new Date(date.getTime());
-      next.setFullYear(next.getFullYear() + years);
-      return next;
-    }
-
-    function parseRRule(ruleText) {
-      const rule = {};
-      if (!ruleText) return rule;
-      for (const part of ruleText.split(';')) {
-        const [key, value] = part.split('=');
-        if (!key || value == null) continue;
-        rule[key] = value;
-      }
-      if (rule.INTERVAL) rule.INTERVAL = Number(rule.INTERVAL);
-      if (rule.COUNT) rule.COUNT = Number(rule.COUNT);
-      if (rule.BYDAY) rule.BYDAY = rule.BYDAY.split(',');
-      if (rule.BYMONTHDAY) rule.BYMONTHDAY = rule.BYMONTHDAY.split(',').map(Number);
-      if (rule.BYMONTH) rule.BYMONTH = rule.BYMONTH.split(',').map(Number);
-      if (rule.UNTIL) rule.UNTIL_DATE = parseDate(rule.UNTIL, false) || parseDate(rule.UNTIL, true);
-      return rule;
-    }
-
-    function startOfToday() {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      return today;
-    }
-
-    function eventDurationMs(start, end, allDay) {
-      if (start && end) return Math.max(end.getTime() - start.getTime(), 0);
-      return allDay ? 24 * 60 * 60 * 1000 : 60 * 60 * 1000;
-    }
-
-    function matchesByMonth(date, byMonth) {
-      if (!byMonth || byMonth.length === 0) return true;
-      return byMonth.includes(date.getMonth() + 1);
-    }
-
-    function matchesByMonthDay(date, byMonthDay) {
-      if (!byMonthDay || byMonthDay.length === 0) return true;
-      return byMonthDay.includes(date.getDate());
-    }
-
-    function matchesByDay(date, byDay) {
-      if (!byDay || byDay.length === 0) return true;
-      const weekday = date.getDay();
-      return byDay.some(code => WEEKDAY_MAP[code.slice(-2)] === weekday);
-    }
-
-    function expandRecurringEvent(event, rangeStart, rangeEnd) {
-      const start = parseDate(event.startRaw, event.allDay);
-      const end = parseDate(event.endRaw, event.allDay);
-      const duration = eventDurationMs(start, end, event.allDay);
-      const exclusions = new Set((event.exdates || []).map(ex => parseDate(ex, event.allDay)).filter(Boolean).map(ex => ex.getTime()));
-      if (!start) return [];
-
-      if (!event.rrule) {
-        if (start >= rangeStart && start <= rangeEnd && !exclusions.has(start.getTime())) {
-          return [{ summary: event.summary, location: event.location, description: event.description, allDay: event.allDay, date: start, endDate: new Date(start.getTime() + duration) }];
-        }
-        return [];
-      }
-
-      const rule = parseRRule(event.rrule);
-      const freq = rule.FREQ;
-      const interval = rule.INTERVAL || 1;
-      const until = rule.UNTIL_DATE || rangeEnd;
-      const maxEnd = until < rangeEnd ? until : rangeEnd;
-      const results = [];
-      let count = 0;
-      let cursor = new Date(start.getTime());
-
-      const pushOccurrence = occurrenceStart => {
-        if (rule.COUNT && count >= rule.COUNT) return false;
-        if (occurrenceStart > maxEnd) return false;
-        if (occurrenceStart >= rangeStart && !exclusions.has(occurrenceStart.getTime())) {
-          results.push({ summary: event.summary, location: event.location, description: event.description, allDay: event.allDay, date: new Date(occurrenceStart.getTime()), endDate: new Date(occurrenceStart.getTime() + duration) });
-        }
-        count += 1;
-        return true;
-      };
-
-      if (freq === 'DAILY') {
-        while (cursor <= maxEnd) {
-          if (matchesByMonth(cursor, rule.BYMONTH) && matchesByMonthDay(cursor, rule.BYMONTHDAY) && matchesByDay(cursor, rule.BYDAY)) {
-            if (!pushOccurrence(cursor)) break;
-          }
-          cursor = addDays(cursor, interval);
-        }
-      } else if (freq === 'WEEKLY') {
-        const byDays = rule.BYDAY && rule.BYDAY.length ? rule.BYDAY : [Object.keys(WEEKDAY_MAP).find(k => WEEKDAY_MAP[k] === start.getDay())];
-        while (cursor <= maxEnd) {
-          const weekStart = addDays(cursor, -cursor.getDay());
-          for (const code of byDays) {
-            const weekday = WEEKDAY_MAP[code.slice(-2)];
-            if (weekday == null) continue;
-            const occurrence = new Date(weekStart.getTime());
-            occurrence.setDate(weekStart.getDate() + weekday);
-            occurrence.setHours(start.getHours(), start.getMinutes(), start.getSeconds(), start.getMilliseconds());
-            if (occurrence < start) continue;
-            if (!matchesByMonth(occurrence, rule.BYMONTH) || !matchesByMonthDay(occurrence, rule.BYMONTHDAY)) continue;
-            if (!pushOccurrence(occurrence)) return results.sort((a, b) => a.date - b.date);
-          }
-          cursor = addDays(cursor, interval * 7);
-        }
-      } else if (freq === 'MONTHLY') {
-        const baseDay = start.getDate();
-        while (cursor <= maxEnd) {
-          const candidateDays = rule.BYMONTHDAY && rule.BYMONTHDAY.length ? rule.BYMONTHDAY : [baseDay];
-          for (const dayNum of candidateDays) {
-            const occurrence = new Date(cursor.getFullYear(), cursor.getMonth(), dayNum, start.getHours(), start.getMinutes(), start.getSeconds(), start.getMilliseconds());
-            if (occurrence.getMonth() !== cursor.getMonth()) continue;
-            if (occurrence < start) continue;
-            if (!matchesByMonth(occurrence, rule.BYMONTH) || !matchesByDay(occurrence, rule.BYDAY)) continue;
-            if (!pushOccurrence(occurrence)) return results.sort((a, b) => a.date - b.date);
-          }
-          cursor = addMonths(cursor, interval);
-        }
-      } else if (freq === 'YEARLY') {
-        while (cursor <= maxEnd) {
-          if (matchesByMonth(cursor, rule.BYMONTH) && matchesByMonthDay(cursor, rule.BYMONTHDAY) && matchesByDay(cursor, rule.BYDAY)) {
-            if (!pushOccurrence(cursor)) break;
-          }
-          cursor = addYears(cursor, interval);
-        }
-      } else if (start >= rangeStart && start <= rangeEnd && !exclusions.has(start.getTime())) {
-        results.push({ summary: event.summary, location: event.location, description: event.description, allDay: event.allDay, date: start, endDate: new Date(start.getTime() + duration) });
-      }
-
-      return results.sort((a, b) => a.date - b.date);
-    }
-
-    function buildCalendarEvents(rawEvents) {
-      const today = startOfToday();
-      const rangeStart = today;
-      const rangeEnd = new Date(today.getFullYear() + 2, today.getMonth(), today.getDate(), 23, 59, 59, 999);
-      const recurrenceOverrides = new Map();
-      const baseEvents = [];
-
-      for (const event of rawEvents) {
-        if (event.recurrenceId) {
-          const recurrenceDate = parseDate(event.recurrenceId, event.allDay);
-          if (recurrenceDate) recurrenceOverrides.set(`${event.summary}|${recurrenceDate.getTime()}`, event);
-        } else {
-          baseEvents.push(event);
-        }
-      }
-
-      const expanded = [];
-      for (const event of baseEvents) {
-        const occurrences = expandRecurringEvent(event, rangeStart, rangeEnd);
-        for (const occurrence of occurrences) {
-          const overrideKey = `${event.summary}|${occurrence.date.getTime()}`;
-          const override = recurrenceOverrides.get(overrideKey);
-          if (override) {
-            const overrideStart = parseDate(override.startRaw, override.allDay);
-            const overrideEnd = parseDate(override.endRaw, override.allDay);
-            const duration = eventDurationMs(overrideStart, overrideEnd, override.allDay);
-            if (overrideStart && overrideStart >= rangeStart && overrideStart <= rangeEnd) {
-              expanded.push({ summary: override.summary || event.summary, location: override.location || event.location, description: override.description || event.description, allDay: override.allDay, date: overrideStart, endDate: new Date(overrideStart.getTime() + duration) });
-            }
+  function parseIcal(text) {
+    const events = [];
+    const unfolded = text.replace(/\r\n[ \t]/g, '').replace(/\n[ \t]/g, '');
+    const lines = unfolded.split(/\r?\n/);
+    let ev = null;
+    for (const line of lines) {
+      if (line === 'BEGIN:VEVENT') {
+        ev = {};
+      } else if (line === 'END:VEVENT') {
+        if (ev && ev.summary) events.push(ev);
+        ev = null;
+      } else if (ev) {
+        if (line.startsWith('SUMMARY:')) {
+          ev.summary = line.slice(8).replace(/\\,/g, ',').replace(/\\n/g, ' ').trim();
+        } else if (line.startsWith('DTSTART;VALUE=DATE:')) {
+          const d = line.slice(19).trim();
+          ev.start = new Date(d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8)+'T12:00:00');
+          ev.allDay = true;
+        } else if (line.match(/^DTSTART(;TZID=[^:]+)?:/)) {
+          const val = line.split(':').slice(1).join(':').trim();
+          if (val.endsWith('Z')) {
+            ev.start = new Date(val.slice(0,4)+'-'+val.slice(4,6)+'-'+val.slice(6,8)+'T'+val.slice(9,11)+':'+val.slice(11,13)+':'+val.slice(13,15)+'Z');
+          } else if (val.includes('T')) {
+            ev.start = new Date(val.slice(0,4)+'-'+val.slice(4,6)+'-'+val.slice(6,8)+'T'+val.slice(9,11)+':'+val.slice(11,13)+':'+val.slice(13,15));
           } else {
-            expanded.push(occurrence);
+            ev.start = new Date(val.slice(0,4)+'-'+val.slice(4,6)+'-'+val.slice(6,8)+'T12:00:00');
+            ev.allDay = true;
           }
+        } else if (line.startsWith('LOCATION:')) {
+          ev.location = line.slice(9).replace(/\\,/g, ',').trim();
         }
       }
-      return expanded.sort((a, b) => a.date - b.date);
+    }
+    return events;
+  }
+
+  function renderEvents(events) {
+    const now = new Date();
+    const cutoff = new Date(); cutoff.setMonth(cutoff.getMonth() - 3);
+    const lookahead = new Date(); lookahead.setMonth(lookahead.getMonth() + 9);
+
+    const filtered = events
+      .filter(ev => ev.start >= cutoff && ev.start <= lookahead)
+      .sort((a, b) => a.start - b.start);
+
+    if (filtered.length === 0) {
+      return '<div class="error-msg">No upcoming events found. Add events to the MPM Google Calendar and they will appear here automatically.</div>';
     }
 
-    function groupEventsByMonth(events) {
-      const grouped = {};
-      for (const event of events) {
-        const key = `${event.date.getFullYear()}-${event.date.getMonth()}`;
-        if (!grouped[key]) grouped[key] = { label: `${MONTHS[event.date.getMonth()]} ${event.date.getFullYear()}`, events: [] };
-        grouped[key].events.push(event);
-      }
-      return Object.values(grouped);
-    }
+    const grouped = {};
+    filtered.forEach(ev => {
+      const key = ev.start.getFullYear() + '-' + String(ev.start.getMonth()).padStart(2, '0');
+      if (!grouped[key]) grouped[key] = { label: MONTHS[ev.start.getMonth()] + ' ' + ev.start.getFullYear(), events: [] };
+      grouped[key].events.push(ev);
+    });
 
-    function formatTime(event) {
-      if (event.allDay) return 'All Day';
-      return event.date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    }
+    let html = '';
+    Object.values(grouped).forEach(group => {
+      html += `<div class="month-label">${group.label}</div><div class="events-list">`;
+      group.events.forEach(ev => {
+        const past = ev.start < now;
+        const day = String(ev.start.getDate()).padStart(2, '0');
+        const weekday = DAYS[ev.start.getDay()];
+        const time = ev.allDay ? 'All Day' : ev.start.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        const loc = ev.location ? `<span>${ev.location.split(',')[0]}</span>` : '';
+        html += `
+          <div class="event-card">
+            <div class="event-date-block">
+              <div class="event-day">${day}</div>
+              <div class="event-weekday">${weekday}</div>
+            </div>
+            <div class="event-info">
+              <div class="event-name">${ev.summary}</div>
+              <div class="event-meta"><span>${time}</span>${loc}</div>
+            </div>
+            <div class="event-badge ${past ? 'past' : ''}">${past ? 'Completed' : 'Upcoming'}</div>
+          </div>`;
+      });
+      html += '</div>';
+    });
+    return html;
+  }
 
-    function renderEvents(events) {
-      const output = document.getElementById('calendar-output');
-      if (!events.length) {
-        output.innerHTML = '<div class="error-msg">No upcoming events.</div>';
-        return;
-      }
+  async function tryFetch(url) {
+    const res = await fetch(url, { cache: 'no-cache' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.text();
+  }
 
-      const groups = groupEventsByMonth(events);
-      output.innerHTML = groups.map(group => {
-        const cards = group.events.map(event => {
-          const day = String(event.date.getDate()).padStart(2, '0');
-          const weekday = DAYS[event.date.getDay()];
-          const meta = [`<span>${escapeHtml(formatTime(event))}</span>`, event.location ? `<span>${escapeHtml(event.location)}</span>` : ''].join('');
-          return `
-            <div class="event-card">
-              <div class="event-date-block">
-                <div class="event-day">${day}</div>
-                <div class="event-weekday">${weekday}</div>
-              </div>
-              <div class="event-info">
-                <div class="event-name">${escapeHtml(event.summary)}</div>
-                <div class="event-meta">${meta}</div>
-              </div>
-              <div class="event-badge">Upcoming</div>
-            </div>`;
-        }).join('');
-        return `<div class="month-label">${escapeHtml(group.label)}</div><div class="events-list">${cards}</div>`;
-      }).join('');
-    }
+  async function loadCalendar() {
+    const output = document.getElementById('calendar-output');
+    const icalUrl = `https://calendar.google.com/calendar/ical/${CAL_ID}/public/basic.ics`;
+    const proxies = [
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(icalUrl)}`,
+      `https://corsproxy.io/?${encodeURIComponent(icalUrl)}`,
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(icalUrl)}`
+    ];
 
-    function renderFallbackCalendar() {
-      const output = document.getElementById('calendar-output');
-      const embedUrl = 'https://calendar.google.com/calendar/embed?src=midpackmafiaracing%40gmail.com&ctz=America%2FChicago';
-      output.innerHTML = `
-        <div class="fallback-shell">
-          <div class="fallback-copy">Live event cards are temporarily unavailable. The full Google Calendar is still available below.</div>
-          <iframe class="calendar-embed" src="${embedUrl}" title="Mid Pack Mafia Google Calendar" frameborder="0" scrolling="no"></iframe>
-        </div>`;
-    }
-
-    async function loadCalendar() {
+    for (const proxy of proxies) {
       try {
-        const response = await fetch('/api/calendar', { cache: 'no-store' });
-        if (!response.ok) throw new Error(`Calendar request failed with ${response.status}`);
-        const icsText = await response.text();
-        const rawEvents = parseIcal(icsText);
-        const upcomingEvents = buildCalendarEvents(rawEvents);
-        renderEvents(upcomingEvents);
-      } catch (error) {
-        console.error('Calendar load failed:', error);
-        renderFallbackCalendar();
-      }
+        const text = await tryFetch(proxy);
+        if (text.includes('BEGIN:VCALENDAR')) {
+          const events = parseIcal(text);
+          output.innerHTML = renderEvents(events);
+          return;
+        }
+      } catch(e) { continue; }
     }
 
-    loadCalendar();
-  </script>
+    output.innerHTML = `
+      <div class="error-msg">
+        <p style="margin-bottom:1.5rem;">Live feed temporarily unavailable. Showing embedded calendar below.</p>
+        <a href="https://calendar.google.com/calendar/r?cid=midpackmafiaracing@gmail.com" target="_blank">Open in Google Calendar &rarr;</a>
+        <br><br>
+        <iframe
+          src="https://calendar.google.com/calendar/embed?src=${CAL_ID}&ctz=America%2FChicago&showTitle=0&showNav=1&showPrint=0&showTabs=0&showCalendars=0&mode=AGENDA&bgcolor=%23000000&color=%23cc0000"
+          style="width:100%; height:550px; border:1px solid #1a1a1a; margin-top:1rem; filter:invert(1) hue-rotate(180deg) saturate(0.8);"
+          frameborder="0" scrolling="no">
+        </iframe>
+      </div>`;
+  }
+
+  loadCalendar();
+</script>
+
 </body>
 </html>
