@@ -74,117 +74,28 @@
       margin: 3rem auto;
       padding: 0 2.5rem;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 24px;
     }
 
     .driver-card {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 0.72;
       cursor: pointer;
       transition: transform 0.2s;
-    }
-    .driver-card:hover { transform: translateY(-6px); }
-
-    .card-bg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: fill;
-    }
-
-    .card-content {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .card-top {
-      display: flex;
-      padding: 5.5% 5% 0;
-      gap: 3%;
-      height: 36%;
-    }
-
-    .card-flag-box {
-      width: 26%;
-      height: 72%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2em;
-    }
-
-    .card-photo-box {
-      flex: 1;
-      height: 100%;
+      border-radius: 8px;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
-    .card-photo-box img {
+    .driver-card:hover { transform: translateY(-8px); }
+    .driver-card img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: top;
-    }
-    .card-photo-placeholder {
-      width: 100%;
-      height: 100%;
-      background: #1a1a1a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #333;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .card-bottom {
-      position: absolute;
-      bottom: 8%;
-      left: 5%;
-      right: 5%;
-    }
-    .card-number {
-      font-family: 'Saira', sans-serif;
-      font-weight: 800;
-      font-size: 1.1em;
-      color: #ff0000;
-      letter-spacing: 0.05em;
-      line-height: 1;
-      margin-bottom: 2px;
-    }
-    .card-name {
-      font-family: 'Saira', sans-serif;
-      font-weight: 800;
-      font-size: 1.05em;
-      color: #fff;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      line-height: 1.1;
-    }
-    .card-sims {
-      font-family: 'Saira', sans-serif;
-      font-weight: 400;
-      font-size: 0.65em;
-      color: #aaa;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-top: 3px;
+      height: auto;
+      display: block;
     }
 
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.85);
+      background: rgba(0,0,0,0.88);
       z-index: 1000;
       align-items: center;
       justify-content: center;
@@ -209,75 +120,62 @@
       right: 1.25rem;
       font-family: 'Saira', sans-serif;
       font-weight: 800;
-      font-size: 20px;
+      font-size: 22px;
       color: #555;
       cursor: pointer;
       background: none;
       border: none;
       line-height: 1;
+      z-index: 10;
     }
     .modal-close:hover { color: #ff0000; }
 
     .modal-header {
       display: grid;
-      grid-template-columns: 200px 1fr;
+      grid-template-columns: 180px 1fr;
       min-height: 220px;
       border-bottom: 1px solid #1a1a1a;
     }
-    .modal-photo {
-      background: #111;
+    .modal-card-thumb {
+      background: #000;
       overflow: hidden;
     }
-    .modal-photo img {
+    .modal-card-thumb img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: top;
-    }
-    .modal-photo-placeholder {
-      width: 100%;
-      height: 100%;
-      min-height: 220px;
-      background: #111;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #333;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      display: block;
     }
     .modal-title {
       padding: 1.5rem 3rem 1.5rem 1.5rem;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      gap: 4px;
     }
-    .modal-flag { font-size: 2.5rem; margin-bottom: 0.5rem; }
     .modal-number {
       font-family: 'Saira', sans-serif;
       font-weight: 800;
       font-size: 15px;
       color: #ff0000;
-      letter-spacing: 0.1em;
-      margin-bottom: 4px;
+      letter-spacing: 0.12em;
     }
     .modal-name {
       font-family: 'Saira', sans-serif;
       font-weight: 800;
-      font-size: 28px;
+      font-size: 26px;
       text-transform: uppercase;
       color: #fff;
       line-height: 1.1;
-      margin-bottom: 8px;
     }
     .modal-location {
       font-family: 'Saira', sans-serif;
       font-weight: 400;
       font-size: 14px;
-      color: #666;
+      color: #555;
       letter-spacing: 0.06em;
+      margin-top: 4px;
     }
 
     .modal-body { padding: 1.5rem; }
@@ -292,6 +190,7 @@
       background: #0a0a0a;
       padding: 0.875rem 1rem;
     }
+    .info-cell.full { grid-column: 1 / -1; }
     .info-label {
       font-family: 'Saira', sans-serif;
       font-weight: 700;
@@ -306,11 +205,11 @@
       font-weight: 400;
       font-size: 15px;
       color: #fff;
-      line-height: 1.5;
+      line-height: 1.6;
     }
-    .info-cell.full { grid-column: 1 / -1; }
 
     .loading-msg {
+      grid-column: 1 / -1;
       text-align: center;
       padding: 4rem;
       font-family: 'Saira', sans-serif;
@@ -378,9 +277,8 @@
   <div class="modal" id="modal">
     <button class="modal-close" id="modal-close">&#x2715;</button>
     <div class="modal-header">
-      <div class="modal-photo" id="modal-photo"></div>
+      <div class="modal-card-thumb" id="modal-thumb"></div>
       <div class="modal-title">
-        <div class="modal-flag" id="modal-flag"></div>
         <div class="modal-number" id="modal-number"></div>
         <div class="modal-name" id="modal-name"></div>
         <div class="modal-location" id="modal-location"></div>
@@ -397,28 +295,7 @@
 
 <script>
   const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkvfqLGrTpUK5-3R4tfPL-rgpTXtwrBN1K-omxTG_z3A5Z_tkyeJi2MV8jpkCxAKaAZsKom8B5I68Y/pub?output=csv';
-  const CARD_BG = '/images/ui/mpm-card.png';
   const IMG_BASE = 'https://raw.githubusercontent.com/midpackmafiaracing-hash/mpm-results/main/images/drivers/';
-
-  const FLAGS = {
-    'us': '\u{1F1FA}\u{1F1F8}', 'US': '\u{1F1FA}\u{1F1F8}', 'usa': '\u{1F1FA}\u{1F1F8}', 'USA': '\u{1F1FA}\u{1F1F8}', 'united states': '\u{1F1FA}\u{1F1F8}',
-    'ca': '\u{1F1E8}\u{1F1E6}', 'CA': '\u{1F1E8}\u{1F1E6}', 'canada': '\u{1F1E8}\u{1F1E6}', 'Canada': '\u{1F1E8}\u{1F1E6}',
-    'ar': '\u{1F1E6}\u{1F1F7}', 'AR': '\u{1F1E6}\u{1F1F7}', 'argentina': '\u{1F1E6}\u{1F1F7}', 'Argentina': '\u{1F1E6}\u{1F1F7}',
-    'gb': '\u{1F1EC}\u{1F1E7}', 'GB': '\u{1F1EC}\u{1F1E7}', 'uk': '\u{1F1EC}\u{1F1E7}', 'UK': '\u{1F1EC}\u{1F1E7}',
-    'au': '\u{1F1E6}\u{1F1FA}', 'AU': '\u{1F1E6}\u{1F1FA}', 'australia': '\u{1F1E6}\u{1F1FA}',
-    'de': '\u{1F1E9}\u{1F1EA}', 'DE': '\u{1F1E9}\u{1F1EA}', 'germany': '\u{1F1E9}\u{1F1EA}',
-    'fr': '\u{1F1EB}\u{1F1F7}', 'FR': '\u{1F1EB}\u{1F1F7}', 'france': '\u{1F1EB}\u{1F1F7}',
-    'nl': '\u{1F1F3}\u{1F1F1}', 'NL': '\u{1F1F3}\u{1F1F1}', 'netherlands': '\u{1F1F3}\u{1F1F1}',
-    'be': '\u{1F1E7}\u{1F1EA}', 'BE': '\u{1F1E7}\u{1F1EA}', 'belgium': '\u{1F1E7}\u{1F1EA}',
-    'it': '\u{1F1EE}\u{1F1F9}', 'IT': '\u{1F1EE}\u{1F1F9}', 'italy': '\u{1F1EE}\u{1F1F9}',
-    'es': '\u{1F1EA}\u{1F1F8}', 'ES': '\u{1F1EA}\u{1F1F8}', 'spain': '\u{1F1EA}\u{1F1F8}',
-  };
-
-  function getFlag(country) {
-    if (!country) return '';
-    const key = country.trim();
-    return FLAGS[key] || key.toUpperCase();
-  }
 
   function parseCSV(text) {
     const lines = text.trim().split('\n');
@@ -439,46 +316,27 @@
   }
 
   function buildCard(driver) {
-    const flag = getFlag(driver.country);
-    const hasPhoto = driver.driver_image && driver.driver_image.trim() !== '';
-    const photoSrc = IMG_BASE + driver.driver_image;
-    const photoEl = hasPhoto
-      ? `<img src="${photoSrc}" alt="" onerror="this.parentElement.innerHTML='<div class=card-photo-placeholder>No Photo</div>'">`
-      : `<div class="card-photo-placeholder">No Photo</div>`;
+    const hasCard = driver.image && driver.image.trim() !== '';
+    if (!hasCard) return null;
 
     const card = document.createElement('div');
     card.className = 'driver-card';
-    card.innerHTML = `
-      <img class="card-bg" src="${CARD_BG}" alt="">
-      <div class="card-content">
-        <div class="card-top">
-          <div class="card-flag-box">${flag}</div>
-          <div class="card-photo-box">${photoEl}</div>
-        </div>
-        <div class="card-bottom">
-          <div class="card-number">#${driver.number}</div>
-          <div class="card-name">${driver.name}</div>
-          <div class="card-sims">${driver.sims || ''}</div>
-        </div>
-      </div>`;
+    card.innerHTML = `<img src="${IMG_BASE}${driver.image}" alt="${driver.name}" onerror="this.parentElement.style.display='none'">`;
     card.addEventListener('click', () => openModal(driver));
     return card;
   }
 
   function openModal(driver) {
-    const flag = getFlag(driver.country);
-    const hasPhoto = driver.driver_image && driver.driver_image.trim() !== '';
-    const photoSrc = IMG_BASE + driver.driver_image;
+    const hasCard = driver.image && driver.image.trim() !== '';
 
-    document.getElementById('modal-flag').textContent = flag;
     document.getElementById('modal-number').textContent = '#' + driver.number;
     document.getElementById('modal-name').textContent = driver.name;
     document.getElementById('modal-location').textContent = driver.location || '';
 
-    const photoEl = document.getElementById('modal-photo');
-    photoEl.innerHTML = hasPhoto
-      ? `<img src="${photoSrc}" alt="${driver.name}" onerror="this.parentElement.innerHTML='<div class=modal-photo-placeholder>No Photo</div>'">`
-      : `<div class="modal-photo-placeholder">No Photo</div>`;
+    const thumb = document.getElementById('modal-thumb');
+    thumb.innerHTML = hasCard
+      ? `<img src="${IMG_BASE}${driver.image}" alt="${driver.name}">`
+      : '';
 
     document.getElementById('modal-body').innerHTML = `
       <div class="info-grid">
@@ -534,9 +392,17 @@
       const text = await res.text();
       const drivers = parseCSV(text);
       grid.innerHTML = '';
-      drivers.forEach(d => { if (d.name) grid.appendChild(buildCard(d)); });
+      drivers.forEach(d => {
+        if (d.name) {
+          const card = buildCard(d);
+          if (card) grid.appendChild(card);
+        }
+      });
+      if (grid.children.length === 0) {
+        grid.innerHTML = '<div class="loading-msg" style="color:#555;">No driver cards uploaded yet.</div>';
+      }
     } catch(e) {
-      grid.innerHTML = '<div class="loading-msg" style="color:#555;">Unable to load driver data. Please try again later.</div>';
+      grid.innerHTML = '<div class="loading-msg" style="color:#555;">Unable to load drivers. Please try again later.</div>';
     }
   }
 
