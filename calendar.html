@@ -272,70 +272,30 @@
 <script>
   const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const CAL_ID = encodeURIComponent('midpackmafiaracing@gmail.com');
-
-  function parseIcal(text) {
-    const events = [];
-    const unfolded = text.replace(/\r\n[ \t]/g, '').replace(/\n[ \t]/g, '');
-    const lines = unfolded.split(/\r?\n/);
-    let ev = null;
-    for (const line of lines) {
-      if (line === 'BEGIN:VEVENT') {
-        ev = {};
-      } else if (line === 'END:VEVENT') {
-        if (ev && ev.summary) events.push(ev);
-        ev = null;
-      } else if (ev) {
-        if (line.startsWith('SUMMARY:')) {
-          ev.summary = line.slice(8).replace(/\\,/g, ',').replace(/\\n/g, ' ').trim();
-        } else if (line.startsWith('DTSTART;VALUE=DATE:')) {
-          const d = line.slice(19).trim();
-          ev.start = new Date(d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8)+'T12:00:00');
-          ev.allDay = true;
-        } else if (line.match(/^DTSTART(;TZID=[^:]+)?:/)) {
-          const val = line.split(':').slice(1).join(':').trim();
-          if (val.endsWith('Z')) {
-            ev.start = new Date(val.slice(0,4)+'-'+val.slice(4,6)+'-'+val.slice(6,8)+'T'+val.slice(9,11)+':'+val.slice(11,13)+':'+val.slice(13,15)+'Z');
-          } else if (val.includes('T')) {
-            ev.start = new Date(val.slice(0,4)+'-'+val.slice(4,6)+'-'+val.slice(6,8)+'T'+val.slice(9,11)+':'+val.slice(11,13)+':'+val.slice(13,15));
-          } else {
-            ev.start = new Date(val.slice(0,4)+'-'+val.slice(4,6)+'-'+val.slice(6,8)+'T12:00:00');
-            ev.allDay = true;
-          }
-        } else if (line.startsWith('LOCATION:')) {
-          ev.location = line.slice(9).replace(/\\,/g, ',').trim();
-        }
-      }
-    }
-    return events;
-  }
+  const CAL_ID = 'midpackmafiaracing@gmail.com';
+  const API_KEY = 'AIzaSyD-9tSrke72GouineSpace';
 
   function renderEvents(events) {
-    const now = new Date();
-    const lookahead = new Date(); lookahead.setMonth(lookahead.getMonth() + 9);
-
-    const upcoming = events
-      .filter(ev => ev.start >= now && ev.start <= lookahead)
-      .sort((a, b) => a.start - b.start);
-
-    if (upcoming.length === 0) {
+    if (!events || events.length === 0) {
       return '<div class="status-msg">No upcoming events scheduled. Check back soon.</div>';
     }
 
     const grouped = {};
-    upcoming.forEach(ev => {
-      const key = ev.start.getFullYear() + '-' + String(ev.start.getMonth()).padStart(2, '0');
-      if (!grouped[key]) grouped[key] = { label: MONTHS[ev.start.getMonth()] + ' ' + ev.start.getFullYear(), events: [] };
-      grouped[key].events.push(ev);
+    events.forEach(ev => {
+      const start = new Date(ev.start.dateTime || ev.start.date + 'T12:00:00');
+      const key = start.getFullYear() + '-' + String(start.getMonth()).padStart(2, '0');
+      if (!grouped[key]) grouped[key] = { label: MONTHS[start.getMonth()] + ' ' + start.getFullYear(), items: [] };
+      grouped[key].items.push({ ev, start });
     });
 
     let html = '';
     Object.values(grouped).forEach(group => {
       html += `<div class="month-label">${group.label}</div><div class="events-list">`;
-      group.events.forEach(ev => {
-        const day = String(ev.start.getDate()).padStart(2, '0');
-        const weekday = DAYS[ev.start.getDay()];
-        const time = ev.allDay ? 'All Day' : ev.start.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      group.items.forEach(({ ev, start }) => {
+        const day = String(start.getDate()).padStart(2, '0');
+        const weekday = DAYS[start.getDay()];
+        const allDay = !ev.start.dateTime;
+        const time = allDay ? 'All Day' : start.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
         const loc = ev.location ? `<span>${ev.location.split(',')[0]}</span>` : '';
         html += `
           <div class="event-card">
@@ -344,7 +304,7 @@
               <div class="event-weekday">${weekday}</div>
             </div>
             <div class="event-info">
-              <div class="event-name">${ev.summary}</div>
+              <div class="event-name">${ev.summary || 'Event'}</div>
               <div class="event-meta"><span>${time}</span>${loc}</div>
             </div>
             <div class="event-badge">Upcoming</div>
@@ -355,33 +315,121 @@
     return html;
   }
 
-  async function tryFetch(url) {
-    const res = await fetch(url, { cache: 'no-cache' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return await res.text();
+  function parseIcal(text) {
+    const events = [];
+    const unfolded = text.replace(/\r\n[ \t]/g, '').replace(/\n[ \t]/g, '');
+    const lines = unfolded.split(/\r?\n/);
+    let ev = null;
+    for (const line of lines) {
+      if (line === 'BEGIN:VEVENT') { ev = {}; }
+      else if (line === 'END:VEVENT') {
+        if (ev && ev.summary) events.push(ev);
+        ev = null;
+      } else if (ev) {
+        if (line.startsWith('SUMMARY:')) {
+          ev.summary = line.slice(8).replace(/\\,/g, ',').replace(/\\n/g, ' ').trim();
+        } else if (line.startsWith('DTSTART;VALUE=DATE:')) {
+          const d = line.slice(19).trim();
+          ev.start = { date: d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8) };
+        } else if (line.match(/^DTSTART(;TZID=[^:]+)?:/)) {
+          const val = line.split(':').slice(1).join(':').trim();
+          if (val.endsWith('Z')) {
+            ev.start = { dateTime: val.slice(0,4)+'-'+val.slice(4,6)+'-'+val.slice(6,8)+'T'+val.slice(9,11)+':'+val.slice(11,13)+':'+val.slice(13,15)+'Z' };
+          } else if (val.includes('T')) {
+            ev.start = { dateTime: val.slice(0,4)+'-'+val.slice(4,6)+'-'+val.slice(6,8)+'T'+val.slice(9,11)+':'+val.slice(11,13)+':'+val.slice(13,15) };
+          } else {
+            ev.start = { date: val.slice(0,4)+'-'+val.slice(4,6)+'-'+val.slice(6,8) };
+          }
+        } else if (line.startsWith('RRULE:')) {
+          ev.rrule = line.slice(6);
+        } else if (line.startsWith('LOCATION:')) {
+          ev.location = line.slice(9).replace(/\\,/g, ',').trim();
+        }
+      }
+    }
+    return events;
+  }
+
+  function expandRecurring(events, until) {
+    const now = new Date();
+    const expanded = [];
+
+    events.forEach(ev => {
+      const startDate = new Date(ev.start.dateTime || ev.start.date + 'T12:00:00');
+
+      if (!ev.rrule) {
+        if (startDate >= now && startDate <= until) expanded.push(ev);
+        return;
+      }
+
+      // Parse RRULE
+      const ruleStr = ev.rrule;
+      const freqMatch = ruleStr.match(/FREQ=(\w+)/);
+      const countMatch = ruleStr.match(/COUNT=(\d+)/);
+      const untilMatch = ruleStr.match(/UNTIL=([\dTZ]+)/);
+      const byDayMatch = ruleStr.match(/BYDAY=([^;]+)/);
+
+      if (!freqMatch) { if (startDate >= now) expanded.push(ev); return; }
+
+      const freq = freqMatch[1];
+      const maxCount = countMatch ? parseInt(countMatch[1]) : 52;
+      const ruleUntil = untilMatch ? new Date(untilMatch[1].slice(0,4)+'-'+untilMatch[1].slice(4,6)+'-'+untilMatch[1].slice(6,8)) : until;
+      const endDate = ruleUntil < until ? ruleUntil : until;
+
+      let current = new Date(startDate);
+      let count = 0;
+
+      while (current <= endDate && count < maxCount) {
+        if (current >= now) {
+          expanded.push({
+            ...ev,
+            start: ev.start.dateTime
+              ? { dateTime: current.toISOString() }
+              : { date: current.toISOString().slice(0,10) }
+          });
+        }
+        count++;
+        if (freq === 'WEEKLY') current = new Date(current.getTime() + 7 * 24 * 60 * 60 * 1000);
+        else if (freq === 'DAILY') current = new Date(current.getTime() + 24 * 60 * 60 * 1000);
+        else if (freq === 'MONTHLY') { current = new Date(current); current.setMonth(current.getMonth() + 1); }
+        else break;
+      }
+    });
+
+    return expanded.sort((a,b) => {
+      const da = new Date(a.start.dateTime || a.start.date + 'T12:00:00');
+      const db = new Date(b.start.dateTime || b.start.date + 'T12:00:00');
+      return da - db;
+    });
   }
 
   async function loadCalendar() {
     const output = document.getElementById('calendar-output');
-    const icalUrl = `https://calendar.google.com/calendar/ical/${CAL_ID}/public/basic.ics`;
+    const icalUrl = `https://calendar.google.com/calendar/ical/${encodeURIComponent(CAL_ID)}/public/basic.ics`;
     const proxies = [
       `https://api.allorigins.win/raw?url=${encodeURIComponent(icalUrl)}`,
       `https://corsproxy.io/?${encodeURIComponent(icalUrl)}`,
-      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(icalUrl)}`
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(icalUrl)}`,
+      `https://thingproxy.freeboard.io/fetch/${icalUrl}`
     ];
+
+    const lookahead = new Date();
+    lookahead.setMonth(lookahead.getMonth() + 6);
 
     for (const proxy of proxies) {
       try {
-        const text = await tryFetch(proxy);
-        if (text.includes('BEGIN:VCALENDAR')) {
-          const events = parseIcal(text);
-          output.innerHTML = renderEvents(events);
-          return;
-        }
+        const res = await fetch(proxy, { cache: 'no-cache' });
+        if (!res.ok) continue;
+        const text = await res.text();
+        if (!text.includes('BEGIN:VCALENDAR')) continue;
+        const raw = parseIcal(text);
+        const events = expandRecurring(raw, lookahead);
+        output.innerHTML = renderEvents(events);
+        return;
       } catch(e) { continue; }
     }
 
-    output.innerHTML = '<div class="status-msg" style="color:#555;">Unable to load calendar. Please <a href="https://calendar.google.com/calendar/r?cid=midpackmafiaracing@gmail.com" target="_blank" style="color:#ff0000; font-weight:700;">view on Google Calendar</a>.</div>';
+    output.innerHTML = '<div class="status-msg" style="color:#555;">Unable to load calendar right now. <a href="https://calendar.google.com/calendar/r?cid=midpackmafiaracing@gmail.com" target="_blank" style="color:#ff0000; font-weight:700; text-decoration:none;">View on Google Calendar &rarr;</a></div>';
   }
 
   loadCalendar();
