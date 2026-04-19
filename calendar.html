@@ -192,9 +192,8 @@
       color: #ff0000;
       white-space: nowrap;
     }
-    .event-badge.past { border-color: #333; color: #444; }
 
-    .loading {
+    .status-msg {
       text-align: center;
       padding: 4rem 2rem;
       font-family: 'Saira', sans-serif;
@@ -204,18 +203,6 @@
       text-transform: uppercase;
       color: #333;
     }
-
-    .error-msg {
-      padding: 2rem;
-      font-family: 'Saira', sans-serif;
-      font-size: 15px;
-      color: #555;
-      border: 1px solid #1a1a1a;
-      background: #0a0a0a;
-      text-align: center;
-      line-height: 1.8;
-    }
-    .error-msg a { color: #ff0000; text-decoration: none; font-weight: 700; }
 
     footer {
       background: #000;
@@ -274,7 +261,7 @@
 </div>
 
 <div class="calendar-wrap">
-  <div id="calendar-output" class="loading">Loading race schedule...</div>
+  <div id="calendar-output" class="status-msg">Loading race schedule...</div>
 </div>
 
 <footer>
@@ -325,19 +312,18 @@
 
   function renderEvents(events) {
     const now = new Date();
-    const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 14);
     const lookahead = new Date(); lookahead.setMonth(lookahead.getMonth() + 9);
 
-    const filtered = events
-      .filter(ev => ev.start >= cutoff && ev.start <= lookahead)
+    const upcoming = events
+      .filter(ev => ev.start >= now && ev.start <= lookahead)
       .sort((a, b) => a.start - b.start);
 
-    if (filtered.length === 0) {
-      return '<div class="error-msg">No upcoming events found. Add events to the MPM Google Calendar and they will appear here automatically.</div>';
+    if (upcoming.length === 0) {
+      return '<div class="status-msg">No upcoming events scheduled. Check back soon.</div>';
     }
 
     const grouped = {};
-    filtered.forEach(ev => {
+    upcoming.forEach(ev => {
       const key = ev.start.getFullYear() + '-' + String(ev.start.getMonth()).padStart(2, '0');
       if (!grouped[key]) grouped[key] = { label: MONTHS[ev.start.getMonth()] + ' ' + ev.start.getFullYear(), events: [] };
       grouped[key].events.push(ev);
@@ -347,7 +333,6 @@
     Object.values(grouped).forEach(group => {
       html += `<div class="month-label">${group.label}</div><div class="events-list">`;
       group.events.forEach(ev => {
-        const past = ev.start < now;
         const day = String(ev.start.getDate()).padStart(2, '0');
         const weekday = DAYS[ev.start.getDay()];
         const time = ev.allDay ? 'All Day' : ev.start.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
@@ -362,7 +347,7 @@
               <div class="event-name">${ev.summary}</div>
               <div class="event-meta"><span>${time}</span>${loc}</div>
             </div>
-            <div class="event-badge ${past ? 'past' : ''}">${past ? 'Completed' : 'Upcoming'}</div>
+            <div class="event-badge">Upcoming</div>
           </div>`;
       });
       html += '</div>';
@@ -396,17 +381,7 @@
       } catch(e) { continue; }
     }
 
-    output.innerHTML = `
-      <div class="error-msg">
-        <p style="margin-bottom:1.5rem;">Live feed temporarily unavailable. Showing embedded calendar below.</p>
-        <a href="https://calendar.google.com/calendar/r?cid=midpackmafiaracing@gmail.com" target="_blank">Open in Google Calendar &rarr;</a>
-        <br><br>
-        <iframe
-          src="https://calendar.google.com/calendar/embed?src=${CAL_ID}&ctz=America%2FChicago&showTitle=0&showNav=1&showPrint=0&showTabs=0&showCalendars=0&mode=AGENDA&bgcolor=%23000000&color=%23cc0000"
-          style="width:100%; height:550px; border:1px solid #1a1a1a; margin-top:1rem; filter:invert(1) hue-rotate(180deg) saturate(0.8);"
-          frameborder="0" scrolling="no">
-        </iframe>
-      </div>`;
+    output.innerHTML = '<div class="status-msg" style="color:#555;">Unable to load calendar. Please <a href="https://calendar.google.com/calendar/r?cid=midpackmafiaracing@gmail.com" target="_blank" style="color:#ff0000; font-weight:700;">view on Google Calendar</a>.</div>';
   }
 
   loadCalendar();
