@@ -325,7 +325,7 @@
 
   function renderEvents(events) {
     const now = new Date();
-    const cutoff = new Date(); cutoff.setMonth(cutoff.getMonth() - 3);
+    const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 14);
     const lookahead = new Date(); lookahead.setMonth(lookahead.getMonth() + 9);
 
     const filtered = events
