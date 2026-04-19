@@ -85,11 +85,7 @@
       overflow: hidden;
     }
     .driver-card:hover { transform: translateY(-8px); }
-    .driver-card img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
+    .driver-card img { width: 100%; height: auto; display: block; }
 
     .modal-overlay {
       display: none;
@@ -136,17 +132,8 @@
       min-height: 220px;
       border-bottom: 1px solid #1a1a1a;
     }
-    .modal-card-thumb {
-      background: #000;
-      overflow: hidden;
-    }
-    .modal-card-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: top;
-      display: block;
-    }
+    .modal-card-thumb { background: #000; overflow: hidden; }
+    .modal-card-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
     .modal-title {
       padding: 1.5rem 3rem 1.5rem 1.5rem;
       display: flex;
@@ -180,16 +167,43 @@
 
     .modal-body { padding: 1.5rem; }
 
+    .wins-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1px;
+      background: #ff0000;
+      margin-bottom: 1px;
+    }
+    .win-cell {
+      background: #0a0a0a;
+      padding: 1rem;
+      text-align: center;
+    }
+    .win-label {
+      font-family: 'Saira', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #ff0000;
+      margin-bottom: 6px;
+    }
+    .win-value {
+      font-family: 'Saira', sans-serif;
+      font-weight: 800;
+      font-size: 32px;
+      color: #fff;
+      line-height: 1;
+    }
+
     .info-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1px;
       background: #1a1a1a;
+      margin-top: 1px;
     }
-    .info-cell {
-      background: #0a0a0a;
-      padding: 0.875rem 1rem;
-    }
+    .info-cell { background: #0a0a0a; padding: 0.875rem 1rem; }
     .info-cell.full { grid-column: 1 / -1; }
     .info-label {
       font-family: 'Saira', sans-serif;
@@ -318,7 +332,6 @@
   function buildCard(driver) {
     const hasCard = driver.image && driver.image.trim() !== '';
     if (!hasCard) return null;
-
     const card = document.createElement('div');
     card.className = 'driver-card';
     card.innerHTML = `<img src="${IMG_BASE}${driver.image}" alt="${driver.name}" onerror="this.parentElement.style.display='none'">`;
@@ -328,7 +341,6 @@
 
   function openModal(driver) {
     const hasCard = driver.image && driver.image.trim() !== '';
-
     document.getElementById('modal-number').textContent = '#' + driver.number;
     document.getElementById('modal-name').textContent = driver.name;
     document.getElementById('modal-location').textContent = driver.location || '';
@@ -338,7 +350,25 @@
       ? `<img src="${IMG_BASE}${driver.image}" alt="${driver.name}">`
       : '';
 
+    const sgWins = driver['SimGrid Wins'] || '0';
+    const irWins = driver['iRacing Wins'] || '0';
+    const lmuWins = driver['LMU Wins'] || '0';
+
     document.getElementById('modal-body').innerHTML = `
+      <div class="wins-row">
+        <div class="win-cell">
+          <div class="win-label">SimGrid Wins</div>
+          <div class="win-value">${sgWins}</div>
+        </div>
+        <div class="win-cell">
+          <div class="win-label">iRacing Wins</div>
+          <div class="win-value">${irWins}</div>
+        </div>
+        <div class="win-cell">
+          <div class="win-label">LMU Wins</div>
+          <div class="win-value">${lmuWins}</div>
+        </div>
+      </div>
       <div class="info-grid">
         <div class="info-cell">
           <div class="info-label">Age</div>
