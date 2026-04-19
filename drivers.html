@@ -140,7 +140,7 @@
       align-items: center;
       justify-content: center;
       color: #333;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -151,7 +151,6 @@
       bottom: 8%;
       left: 5%;
       right: 5%;
-      text-align: left;
     }
     .card-number {
       font-family: 'Saira', sans-serif;
@@ -181,7 +180,6 @@
       margin-top: 3px;
     }
 
-    /* MODAL */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -223,7 +221,7 @@
     .modal-header {
       display: grid;
       grid-template-columns: 200px 1fr;
-      min-height: 200px;
+      min-height: 220px;
       border-bottom: 1px solid #1a1a1a;
     }
     .modal-photo {
@@ -239,6 +237,7 @@
     .modal-photo-placeholder {
       width: 100%;
       height: 100%;
+      min-height: 220px;
       background: #111;
       display: flex;
       align-items: center;
@@ -255,7 +254,7 @@
       flex-direction: column;
       justify-content: center;
     }
-    .modal-flag { font-size: 2rem; margin-bottom: 0.5rem; }
+    .modal-flag { font-size: 2.5rem; margin-bottom: 0.5rem; }
     .modal-number {
       font-family: 'Saira', sans-serif;
       font-weight: 800;
@@ -288,7 +287,6 @@
       grid-template-columns: 1fr 1fr;
       gap: 1px;
       background: #1a1a1a;
-      margin-bottom: 1px;
     }
     .info-cell {
       background: #0a0a0a;
@@ -310,9 +308,7 @@
       color: #fff;
       line-height: 1.5;
     }
-    .info-cell.full {
-      grid-column: 1 / -1;
-    }
+    .info-cell.full { grid-column: 1 / -1; }
 
     .loading-msg {
       text-align: center;
@@ -378,7 +374,6 @@
   <div class="loading-msg">Loading drivers...</div>
 </div>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal" id="modal">
     <button class="modal-close" id="modal-close">&#x2715;</button>
@@ -403,24 +398,26 @@
 <script>
   const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkvfqLGrTpUK5-3R4tfPL-rgpTXtwrBN1K-omxTG_z3A5Z_tkyeJi2MV8jpkCxAKaAZsKom8B5I68Y/pub?output=csv';
   const CARD_BG = '/images/ui/mpm-card.png';
+  const IMG_BASE = 'https://raw.githubusercontent.com/midpackmafiaracing-hash/mpm-results/main/images/drivers/';
 
   const FLAGS = {
-    'US': '🇺🇸', 'USA': '🇺🇸', 'United States': '🇺🇸',
-    'CA': '🇨🇦', 'Canada': '🇨🇦',
-    'AR': '🇦🇷', 'Argentina': '🇦🇷',
-    'GB': '🇬🇧', 'UK': '🇬🇧', 'United Kingdom': '🇬🇧',
-    'AU': '🇦🇺', 'Australia': '🇦🇺',
-    'DE': '🇩🇪', 'Germany': '🇩🇪',
-    'FR': '🇫🇷', 'France': '🇫🇷',
-    'NL': '🇳🇱', 'Netherlands': '🇳🇱',
-    'BE': '🇧🇪', 'Belgium': '🇧🇪',
-    'IT': '🇮🇹', 'Italy': '🇮🇹',
-    'ES': '🇪🇸', 'Spain': '🇪🇸',
+    'us': '\u{1F1FA}\u{1F1F8}', 'US': '\u{1F1FA}\u{1F1F8}', 'usa': '\u{1F1FA}\u{1F1F8}', 'USA': '\u{1F1FA}\u{1F1F8}', 'united states': '\u{1F1FA}\u{1F1F8}',
+    'ca': '\u{1F1E8}\u{1F1E6}', 'CA': '\u{1F1E8}\u{1F1E6}', 'canada': '\u{1F1E8}\u{1F1E6}', 'Canada': '\u{1F1E8}\u{1F1E6}',
+    'ar': '\u{1F1E6}\u{1F1F7}', 'AR': '\u{1F1E6}\u{1F1F7}', 'argentina': '\u{1F1E6}\u{1F1F7}', 'Argentina': '\u{1F1E6}\u{1F1F7}',
+    'gb': '\u{1F1EC}\u{1F1E7}', 'GB': '\u{1F1EC}\u{1F1E7}', 'uk': '\u{1F1EC}\u{1F1E7}', 'UK': '\u{1F1EC}\u{1F1E7}',
+    'au': '\u{1F1E6}\u{1F1FA}', 'AU': '\u{1F1E6}\u{1F1FA}', 'australia': '\u{1F1E6}\u{1F1FA}',
+    'de': '\u{1F1E9}\u{1F1EA}', 'DE': '\u{1F1E9}\u{1F1EA}', 'germany': '\u{1F1E9}\u{1F1EA}',
+    'fr': '\u{1F1EB}\u{1F1F7}', 'FR': '\u{1F1EB}\u{1F1F7}', 'france': '\u{1F1EB}\u{1F1F7}',
+    'nl': '\u{1F1F3}\u{1F1F1}', 'NL': '\u{1F1F3}\u{1F1F1}', 'netherlands': '\u{1F1F3}\u{1F1F1}',
+    'be': '\u{1F1E7}\u{1F1EA}', 'BE': '\u{1F1E7}\u{1F1EA}', 'belgium': '\u{1F1E7}\u{1F1EA}',
+    'it': '\u{1F1EE}\u{1F1F9}', 'IT': '\u{1F1EE}\u{1F1F9}', 'italy': '\u{1F1EE}\u{1F1F9}',
+    'es': '\u{1F1EA}\u{1F1F8}', 'ES': '\u{1F1EA}\u{1F1F8}', 'spain': '\u{1F1EA}\u{1F1F8}',
   };
 
   function getFlag(country) {
     if (!country) return '';
-    return FLAGS[country.trim()] || country;
+    const key = country.trim();
+    return FLAGS[key] || key.toUpperCase();
   }
 
   function parseCSV(text) {
@@ -444,8 +441,9 @@
   function buildCard(driver) {
     const flag = getFlag(driver.country);
     const hasPhoto = driver.driver_image && driver.driver_image.trim() !== '';
+    const photoSrc = IMG_BASE + driver.driver_image;
     const photoEl = hasPhoto
-      ? `<img src="/images/drivers/${driver.driver_image}" alt="${driver.name}" onerror="this.parentElement.innerHTML='<div class=\"card-photo-placeholder\">No Photo</div>'">`
+      ? `<img src="${photoSrc}" alt="" onerror="this.parentElement.innerHTML='<div class=card-photo-placeholder>No Photo</div>'">`
       : `<div class="card-photo-placeholder">No Photo</div>`;
 
     const card = document.createElement('div');
@@ -463,7 +461,6 @@
           <div class="card-sims">${driver.sims || ''}</div>
         </div>
       </div>`;
-
     card.addEventListener('click', () => openModal(driver));
     return card;
   }
@@ -471,6 +468,7 @@
   function openModal(driver) {
     const flag = getFlag(driver.country);
     const hasPhoto = driver.driver_image && driver.driver_image.trim() !== '';
+    const photoSrc = IMG_BASE + driver.driver_image;
 
     document.getElementById('modal-flag').textContent = flag;
     document.getElementById('modal-number').textContent = '#' + driver.number;
@@ -479,7 +477,7 @@
 
     const photoEl = document.getElementById('modal-photo');
     photoEl.innerHTML = hasPhoto
-      ? `<img src="/images/drivers/${driver.driver_image}" alt="${driver.name}" onerror="this.parentElement.innerHTML='<div class=\"modal-photo-placeholder\">No Photo</div>'">`
+      ? `<img src="${photoSrc}" alt="${driver.name}" onerror="this.parentElement.innerHTML='<div class=modal-photo-placeholder>No Photo</div>'">`
       : `<div class="modal-photo-placeholder">No Photo</div>`;
 
     document.getElementById('modal-body').innerHTML = `
@@ -532,13 +530,11 @@
     const grid = document.getElementById('drivers-grid');
     try {
       const res = await fetch(SHEET_CSV);
-      if (!res.ok) throw new Error('Failed to fetch');
+      if (!res.ok) throw new Error('Failed');
       const text = await res.text();
       const drivers = parseCSV(text);
       grid.innerHTML = '';
-      drivers.forEach(d => {
-        if (d.name) grid.appendChild(buildCard(d));
-      });
+      drivers.forEach(d => { if (d.name) grid.appendChild(buildCard(d)); });
     } catch(e) {
       grid.innerHTML = '<div class="loading-msg" style="color:#555;">Unable to load driver data. Please try again later.</div>';
     }
