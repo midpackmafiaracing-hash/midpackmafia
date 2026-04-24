@@ -470,13 +470,31 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       });
-      if (!response.ok) throw new Error("Failed to save results to Cloudflare.");
+      if (!response.ok) {
+        let message = "Failed to save results to Cloudflare.";
+        try {
+          const payload = await response.json();
+          if (payload && payload.error) message = payload.error;
+        } catch {
+          // Keep generic message if response is not JSON.
+        }
+        throw new Error(message);
+      }
       return response.json();
     }
 
     async function resetData() {
       const response = await fetch(API_URL, { method: "DELETE" });
-      if (!response.ok) throw new Error("Failed to reset results.");
+      if (!response.ok) {
+        let message = "Failed to reset results.";
+        try {
+          const payload = await response.json();
+          if (payload && payload.error) message = payload.error;
+        } catch {
+          // Keep generic message if response is not JSON.
+        }
+        throw new Error(message);
+      }
       return response.json();
     }
 

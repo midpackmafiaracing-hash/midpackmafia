@@ -1,5 +1,6 @@
 name = "mpm-website"
 compatibility_date = "2026-04-18"
+pages_build_output_dir = "."
 
 [[kv_namespaces]]
 binding = "RESULTS_KV"
