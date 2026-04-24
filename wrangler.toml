@@ -3,5 +3,5 @@ compatibility_date = "2026-04-18"
 
 [[kv_namespaces]]
 binding = "RESULTS_KV"
-id = "REPLACE_WITH_YOUR_PRODUCTION_KV_NAMESPACE_ID"
-preview_id = "REPLACE_WITH_YOUR_PREVIEW_KV_NAMESPACE_ID"
+id = "85c723b568174bd58149741878f6d21c"
+preview_id = "98b23145a1f0447bb9756afdcdd8abf0"
