@@ -767,6 +767,12 @@
         const dnf = Boolean(row.dnf) || /dnf|dns|dsq|retired/.test(statusText);
         const dns = Boolean(row.dns) || /dns/.test(statusText);
         const fallbackPoints = Math.max(0, 30 - (position * 2));
+        const lapsComplete = row.totalLaps ?? row.laps ?? row.laps_complete ?? "";
+        const averageLapRaw = Number(row.average_lap);
+        const totalLapsRaw = Number(lapsComplete);
+        const derivedTotalTime = Number.isFinite(averageLapRaw) && Number.isFinite(totalLapsRaw)
+          ? Math.round(averageLapRaw * totalLapsRaw)
+          : "";
         const startPosRaw = Number.parseInt(
           String(row.starting_position ?? row.startPosition ?? row.start_position ?? row.grid ?? "").replace(/[^\d-]/g, ""),
           10
@@ -783,10 +789,10 @@
           dns,
           carNum: row.carNum ?? row.number ?? row.carNumber ?? row.livery?.car_number ?? "",
           car: row.car ?? row.carModel ?? row.vehicle ?? row.car_name ?? "",
-          totalLaps: row.totalLaps ?? row.laps ?? row.laps_complete ?? "",
+          totalLaps: lapsComplete,
           qualifyingPosition,
-          bestLap: row.bestLap ?? row.fastestLap ?? row.fastest_lap ?? "",
-          totalTime: row.totalTime ?? row.raceTime ?? row.time ?? row.total_time ?? ""
+          bestLap: row.bestLap ?? row.fastestLap ?? row.fastest_lap ?? row.best_lap_time ?? "",
+          totalTime: row.totalTime ?? row.raceTime ?? row.time ?? row.total_time ?? row.session_time ?? derivedTotalTime
         });
       });
 
