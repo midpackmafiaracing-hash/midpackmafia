@@ -712,7 +712,24 @@
         throw new Error("Invalid JSON file.");
       }
 
-      const rows = extractRaceRowsFromJson(parsedJson);
+      function extractIRacingRows(payload) {
+        if (!payload || payload.type !== "event_result" || !payload.data) return [];
+        const sessions = Array.isArray(payload.data.session_results) ? payload.data.session_results : [];
+        if (!sessions.length) return [];
+        const raceSession = sessions.find((session) =>
+          session && (
+            session.simsession_type === 6 ||
+            String(session.simsession_name || "").toUpperCase() === "RACE" ||
+            String(session.simsession_type_name || "").toLowerCase() === "race"
+          )
+        );
+        const raceRows = raceSession && Array.isArray(raceSession.results) ? raceSession.results : [];
+        return raceRows;
+      }
+
+      const rows = extractIRacingRows(parsedJson).length
+        ? extractIRacingRows(parsedJson)
+        : extractRaceRowsFromJson(parsedJson);
       if (!rows.length) {
         throw new Error("Could not find results rows in JSON. Looking for arrays like results/entries/drivers.");
       }
@@ -720,17 +737,26 @@
       const mapped = [];
       rows.forEach((row) => {
         if (!row || typeof row !== "object") return;
+        const isIRacingRow = "cust_id" in row || "display_name" in row || "finish_position" in row;
         const driver = String(
           row.driverName ?? row.driver ?? row.name ?? row.fullName ?? row.shortName ?? row.playerName ?? row.teamName ?? row.id ??
           row.display_name ?? row.displayName ?? row.driver_name ?? row.customer_name ?? ""
         ).trim();
-        const position = Number.parseInt(
+        const finishPosRaw = Number.parseInt(String(row.finish_position ?? "").replace(/[^\d-]/g, ""), 10);
+        const genericPosRaw = Number.parseInt(
           String(
             row.position ?? row.pos ?? row.finishPosition ?? row.finalPosition ?? row.place ??
-            row.finish_position ?? row.class_position ?? row.overall_position ?? row.finPos ?? ""
+            row.class_position ?? row.overall_position ?? row.finPos ?? ""
           ).replace(/[^\d-]/g, ""),
           10
         );
+        let position = Number.NaN;
+        if (Number.isFinite(finishPosRaw)) {
+          // iRacing event_result uses zero-based finish positions.
+          position = finishPosRaw >= 0 ? finishPosRaw + 1 : finishPosRaw;
+        } else if (Number.isFinite(genericPosRaw)) {
+          position = isIRacingRow && genericPosRaw >= 0 ? genericPosRaw + 1 : genericPosRaw;
+        }
         if (!driver || !Number.isFinite(position) || position <= 0) return;
 
         const pointsValue = Number.parseFloat(
@@ -741,6 +767,13 @@
         const dnf = Boolean(row.dnf) || /dnf|dns|dsq|retired/.test(statusText);
         const dns = Boolean(row.dns) || /dns/.test(statusText);
         const fallbackPoints = Math.max(0, 30 - (position * 2));
+        const startPosRaw = Number.parseInt(
+          String(row.starting_position ?? row.startPosition ?? row.start_position ?? row.grid ?? "").replace(/[^\d-]/g, ""),
+          10
+        );
+        const qualifyingPosition = Number.isFinite(startPosRaw)
+          ? (startPosRaw >= 0 ? startPosRaw + 1 : "")
+          : (row.qualifyingPosition ?? row.qualiPosition ?? row.qualifying ?? "");
 
         mapped.push({
           driver,
@@ -748,10 +781,10 @@
           points: Number.isFinite(pointsValue) ? pointsValue : fallbackPoints,
           dnf,
           dns,
-          carNum: row.carNum ?? row.number ?? row.carNumber ?? "",
-          car: row.car ?? row.carModel ?? row.vehicle ?? "",
+          carNum: row.carNum ?? row.number ?? row.carNumber ?? row.livery?.car_number ?? "",
+          car: row.car ?? row.carModel ?? row.vehicle ?? row.car_name ?? "",
           totalLaps: row.totalLaps ?? row.laps ?? row.laps_complete ?? "",
-          qualifyingPosition: row.qualifyingPosition ?? row.qualiPosition ?? row.qualifying ?? row.grid ?? row.startPosition ?? row.startingPosition ?? row.start_position ?? "",
+          qualifyingPosition,
           bestLap: row.bestLap ?? row.fastestLap ?? row.fastest_lap ?? "",
           totalTime: row.totalTime ?? row.raceTime ?? row.time ?? row.total_time ?? ""
         });
