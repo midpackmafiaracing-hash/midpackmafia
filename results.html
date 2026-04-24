@@ -592,27 +592,53 @@
 
     function flattenJsonRows(value) {
       if (!value) return [];
-      if (Array.isArray(value)) return value;
-      if (typeof value !== "object") return [];
 
       const commonKeys = [
         "results", "entries", "drivers", "classification", "standings",
         "sessionResult", "sessionResults", "leaderboard", "rows", "data", "result"
       ];
 
-      for (const key of commonKeys) {
-        if (Array.isArray(value[key])) return value[key];
-      }
+      function collectFromNode(node, output) {
+        if (!node) return;
 
-      for (const nestedKey of Object.keys(value)) {
-        const nested = value[nestedKey];
-        if (nested && typeof nested === "object") {
-          for (const key of commonKeys) {
-            if (Array.isArray(nested[key])) return nested[key];
+        if (Array.isArray(node)) {
+          for (const item of node) {
+            if (item && typeof item === "object") {
+              if (Array.isArray(item.result)) {
+                collectFromNode(item.result, output);
+              } else if (Array.isArray(item.results)) {
+                collectFromNode(item.results, output);
+              } else if (
+                "position" in item || "pos" in item || "finishPosition" in item || "finalPosition" in item
+              ) {
+                output.push(item);
+              } else {
+                collectFromNode(item, output);
+              }
+            }
+          }
+          return;
+        }
+
+        if (typeof node !== "object") return;
+
+        for (const key of commonKeys) {
+          if (Array.isArray(node[key])) {
+            collectFromNode(node[key], output);
+          }
+        }
+
+        for (const key of Object.keys(node)) {
+          const nested = node[key];
+          if (nested && typeof nested === "object") {
+            collectFromNode(nested, output);
           }
         }
       }
-      return [];
+
+      const output = [];
+      collectFromNode(value, output);
+      return output;
     }
 
     function parseResultsJson(text) {
