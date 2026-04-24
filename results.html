@@ -360,7 +360,7 @@
         </div>
         <div>
           <label for="resultsFile">Results File</label>
-          <input id="resultsFile" type="file" accept=".csv,.txt" required>
+          <input id="resultsFile" type="file" accept=".csv,.txt,.json,application/json,text/json" required>
         </div>
       </div>
       <div class="upload-actions">
@@ -622,6 +622,80 @@
       return results;
     }
 
+    function flattenJsonRows(value) {
+      if (!value) return [];
+      if (Array.isArray(value)) return value;
+      if (typeof value !== "object") return [];
+
+      const commonKeys = [
+        "results", "entries", "drivers", "classification", "standings",
+        "sessionResult", "sessionResults", "leaderboard", "rows", "data"
+      ];
+
+      for (const key of commonKeys) {
+        if (Array.isArray(value[key])) return value[key];
+      }
+
+      for (const nestedKey of Object.keys(value)) {
+        const nested = value[nestedKey];
+        if (nested && typeof nested === "object") {
+          for (const key of commonKeys) {
+            if (Array.isArray(nested[key])) return nested[key];
+          }
+        }
+      }
+      return [];
+    }
+
+    function parseResultsJson(text) {
+      let parsedJson;
+      try {
+        parsedJson = JSON.parse(text);
+      } catch {
+        throw new Error("Invalid JSON file.");
+      }
+
+      const rows = flattenJsonRows(parsedJson);
+      if (!rows.length) {
+        throw new Error("Could not find results rows in JSON. Looking for arrays like results/entries/drivers.");
+      }
+
+      const mapped = [];
+      rows.forEach((row) => {
+        if (!row || typeof row !== "object") return;
+        const driver = String(
+          row.driverName ?? row.driver ?? row.name ?? row.fullName ?? row.shortName ?? row.playerName ?? row.teamName ?? ""
+        ).trim();
+        const position = Number.parseInt(
+          String(row.position ?? row.pos ?? row.finishPosition ?? row.finalPosition ?? row.place ?? "").replace(/[^\d-]/g, ""),
+          10
+        );
+        if (!driver || !Number.isFinite(position) || position <= 0) return;
+
+        const pointsValue = Number.parseInt(
+          String(row.points ?? row.pts ?? row.score ?? "").replace(/[^\d-]/g, ""),
+          10
+        );
+        const statusText = String(row.status ?? row.resultStatus ?? row.finishStatus ?? "").toLowerCase();
+        const dnf = /dnf|dns|dsq|retired/.test(statusText);
+        const fallbackPoints = Math.max(0, 30 - (position * 2));
+
+        mapped.push({
+          driver,
+          position,
+          points: Number.isFinite(pointsValue) ? pointsValue : fallbackPoints,
+          dnf
+        });
+      });
+
+      if (!mapped.length) {
+        throw new Error("JSON parsed, but no valid driver/position rows were found.");
+      }
+
+      mapped.sort((a, b) => a.position - b.position);
+      return mapped;
+    }
+
     function mergeStandings(existing, raceResults) {
       const map = new Map(existing.map((entry) => [entry.driver.toLowerCase(), { ...entry }]));
       raceResults.forEach((result) => {
@@ -664,7 +738,8 @@
 
       try {
         const text = await file.text();
-        const parsed = parseResultsText(text);
+        const isJson = file.name.toLowerCase().endsWith(".json") || file.type.includes("json");
+        const parsed = isJson ? parseResultsJson(text) : parseResultsText(text);
         const podium = parsed.slice(0, 3).map((row) => row.driver);
 
         state.events.push({ sim, series, eventName, round, duration, podium });
