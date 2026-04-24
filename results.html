@@ -8,22 +8,300 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Saira', sans-serif; background: #000; color: #fff; }
-    nav, footer { background: #000; padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-    nav { height: 72px; border-bottom: 3px solid #ff0000; }
-    footer { border-top: 3px solid #ff0000; padding: 2rem 2.5rem; margin-top: 4rem; }
-    .nav-wordmark, .nav-links a { color: #fff; text-decoration: none; text-transform: uppercase; }
-    .nav-wordmark { font-weight: 800; font-size: 26px; letter-spacing: 0.06em; }
-    .nav-wordmark span, .nav-links a:hover, .nav-links a.active, .eyebrow { color: #ff0000; }
-    .nav-links { list-style: none; display: flex; gap: 28px; }
-    .nav-links a { font-weight: 700; font-size: 12px; letter-spacing: 0.12em; }
-    .wrap { max-width: 960px; margin: 0 auto; padding: 4rem 2rem; }
-    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1rem; }
-    h1 { font-size: 48px; font-weight: 800; text-transform: uppercase; line-height: 1; margin-bottom: 1rem; }
-    p { max-width: 55ch; color: #aaa; line-height: 1.7; }
-    .card { margin-top: 2rem; border: 1px solid #1a1a1a; background: #0a0a0a; padding: 1.5rem; }
-    .footer-copy, .footer-tagline { font-size: 12px; letter-spacing: 0.08em; }
-    .footer-copy { color: #444; }
-    .footer-tagline { color: #ff0000; text-transform: uppercase; font-weight: 700; }
+
+    nav {
+      background: #000;
+      border-bottom: 3px solid #ff0000;
+      padding: 0 2.5rem;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-wordmark {
+      font-weight: 800;
+      font-size: 36px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fff;
+      text-decoration: none;
+    }
+    .nav-wordmark span { color: #ff0000; }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-weight: 700;
+      font-size: 13px;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .nav-links a:hover, .nav-links a.active { color: #ff0000; }
+
+    .hero {
+      background: linear-gradient(180deg, #0a0a0a 0%, #000 100%);
+      border-bottom: 1px solid #1a1a1a;
+      padding: 4rem 2rem 3.5rem;
+      text-align: center;
+    }
+    .hero-inner { max-width: 980px; margin: 0 auto; }
+    .hero-label {
+      color: #ff0000;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-size: 52px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      line-height: 1.05;
+      margin-bottom: 1rem;
+    }
+    .hero h1 span { color: #ff0000; }
+    .hero p {
+      color: #aaa;
+      max-width: 760px;
+      margin: 0 auto;
+      line-height: 1.8;
+      font-size: 17px;
+    }
+
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+    .section-label {
+      font-size: 14px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #ff0000;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+    }
+    .section-title {
+      font-size: 34px;
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
+    }
+    .section-intro {
+      color: #888;
+      max-width: 68ch;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    .upload-panel {
+      border: 1px solid #1a1a1a;
+      background: #0a0a0a;
+      padding: 1.25rem;
+    }
+    .upload-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.8rem;
+      margin-bottom: 0.9rem;
+    }
+    .upload-grid label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #888;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+    .upload-grid input,
+    .upload-grid select {
+      width: 100%;
+      background: #111;
+      border: 1px solid #222;
+      color: #fff;
+      font-family: 'Saira', sans-serif;
+      padding: 0.62rem 0.72rem;
+      font-size: 14px;
+    }
+    .upload-actions {
+      display: flex;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+    .btn {
+      border: 1px solid #ff0000;
+      background: #ff0000;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'Saira', sans-serif;
+      padding: 0.65rem 1rem;
+      cursor: pointer;
+    }
+    .btn.secondary {
+      background: transparent;
+      color: #ff0000;
+    }
+    .upload-help {
+      margin-top: 0.8rem;
+      color: #888;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .upload-status {
+      margin-top: 0.75rem;
+      font-size: 14px;
+      color: #ddd;
+      min-height: 1.2em;
+    }
+
+    .event-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .event-card {
+      background: #0a0a0a;
+      border: 1px solid #1a1a1a;
+      padding: 1.4rem;
+      transition: border-color 0.15s ease;
+    }
+    .event-card:hover { border-color: #ff0000; }
+    .event-series {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #ff0000;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .event-title {
+      font-size: 22px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+      line-height: 1.2;
+    }
+    .event-meta {
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 1rem;
+    }
+    .podium {
+      border-top: 1px solid #1a1a1a;
+      padding-top: 0.9rem;
+      display: grid;
+      gap: 0.45rem;
+    }
+    .podium-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 15px;
+      color: #ddd;
+    }
+    .podium-row strong {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .table-wrap {
+      border: 1px solid #1a1a1a;
+      background: #0a0a0a;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+    th, td {
+      padding: 0.95rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #1a1a1a;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+    th {
+      color: #ff0000;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 700;
+      background: #0d0d0d;
+    }
+    tbody tr:hover { background: #101010; }
+    td:first-child, th:first-child { width: 70px; }
+    td:last-child, th:last-child { text-align: right; }
+    .pts { font-weight: 700; color: #fff; }
+
+    .highlights {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .highlight-card {
+      background: #0a0a0a;
+      border: 1px solid #1a1a1a;
+      padding: 1.25rem;
+    }
+    .highlight-label {
+      color: #ff0000;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .highlight-value {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 0.25rem;
+      line-height: 1;
+    }
+    .highlight-text {
+      color: #888;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    footer {
+      background: #000;
+      border-top: 3px solid #ff0000;
+      padding: 2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .footer-copy {
+      font-weight: 400;
+      font-size: 13px;
+      color: #444;
+      letter-spacing: 0.08em;
+    }
+    .footer-tagline {
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #ff0000;
+    }
+
+    @media (max-width: 980px) {
+      nav { height: auto; padding: 1rem 1.2rem; flex-direction: column; align-items: flex-start; }
+      .nav-wordmark { font-size: 30px; }
+      .nav-links { flex-wrap: wrap; gap: 12px 18px; }
+      .hero { padding-top: 3rem; }
+      .hero h1 { font-size: 40px; }
+      .section-title { font-size: 28px; }
+    }
   </style>
 </head>
 <body>
@@ -34,21 +312,384 @@
       <li><a href="drivers.html">Drivers</a></li>
       <li><a href="series.html">Series</a></li>
       <li><a href="results.html" class="active">Results</a></li>
-      <li><a href="media.html">Media</a></li>
+      <li><a href="media.html">Links</a></li>
       <li><a href="calendar.html">Calendar</a></li>
     </ul>
   </nav>
-  <main class="wrap">
-    <div class="eyebrow">Results</div>
-    <h1>Race Results</h1>
-    <p>This page is online again and ready for podiums, standings, and recap content.</p>
-    <div class="card">
-      Add race-by-race summaries, points tables, or links to external result sheets here.
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-label">Simracing Results</div>
+      <h1>Track the <span>Season Fight</span></h1>
+      <p>
+        Every week, we update race finishes, podiums, and championship points across the series we run.
+        Check each event result below and see who's climbing in the Mid Pack Mafia standings.
+      </p>
     </div>
-  </main>
+  </section>
+
+  <section class="section">
+    <div class="section-label">Upload Center</div>
+    <h2 class="section-title">Upload Race Results</h2>
+    <p class="section-intro">Upload a race results file from ACC, iRacing, or Le Mans Ultimate to automatically update this page.</p>
+    <form id="uploadForm" class="upload-panel">
+      <div class="upload-grid">
+        <div>
+          <label for="sim">Sim</label>
+          <select id="sim" required>
+            <option value="ACC">Assetto Corsa Competizione</option>
+            <option value="iRacing">iRacing</option>
+            <option value="Le Mans Ultimate">Le Mans Ultimate</option>
+          </select>
+        </div>
+        <div>
+          <label for="series">Series</label>
+          <input id="series" type="text" placeholder="GT3 Sprint" required>
+        </div>
+        <div>
+          <label for="eventName">Event</label>
+          <input id="eventName" type="text" placeholder="Road Atlanta Sprint" required>
+        </div>
+        <div>
+          <label for="round">Round</label>
+          <input id="round" type="number" min="1" value="1" required>
+        </div>
+        <div>
+          <label for="duration">Duration</label>
+          <input id="duration" type="text" placeholder="45 Minutes" required>
+        </div>
+        <div>
+          <label for="resultsFile">Results File</label>
+          <input id="resultsFile" type="file" accept=".csv,.txt" required>
+        </div>
+      </div>
+      <div class="upload-actions">
+        <button type="submit" class="btn">Upload Results</button>
+        <button type="button" id="resetData" class="btn secondary">Reset to Default Data</button>
+      </div>
+      <p class="upload-help">Expected columns include a driver name and finishing position. Supported aliases: driver/name and position/pos/finish/final position. Points and DNF status are optional.</p>
+      <div id="uploadStatus" class="upload-status"></div>
+    </form>
+  </section>
+
+  <section class="section">
+    <div class="section-label">Latest Race Week</div>
+    <h2 class="section-title">Event Results</h2>
+    <p class="section-intro">Recent rounds from each platform with the current podium finishers.</p>
+    <div id="eventGrid" class="event-grid"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-label">Championship</div>
+    <h2 class="section-title">Driver Standings</h2>
+    <p class="section-intro">Overall points after five rounds. Update this table each race week.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Pos</th>
+            <th>Driver</th>
+            <th>Wins</th>
+            <th>Podiums</th>
+            <th>Top 5</th>
+            <th>DNF</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+        <tbody id="standingsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-label">Season Stats</div>
+    <h2 class="section-title">Recent Highlights</h2>
+    <p class="section-intro">Quick race week snapshot from the most recent rounds.</p>
+    <div id="highlightsGrid" class="highlights"></div>
+  </section>
+
   <footer>
     <div class="footer-copy">&copy; 2025 Mid Pack Mafia. All rights reserved.</div>
     <div class="footer-tagline">Respect the Process. Fear the Results.</div>
   </footer>
+  <script>
+    const API_URL = "/api/results";
+    const DEFAULT_DATA = {
+      events: [
+        { sim: "iRacing", series: "GT3", eventName: "Road Atlanta Sprint", round: 5, duration: "45 Minutes", podium: ["J. Walker", "M. Davis", "R. Payne"] },
+        { sim: "ACC", series: "Team Endurance", eventName: "Spa 2H", round: 3, duration: "120 Minutes", podium: ["Team Nightshift", "MPM Alpha", "Gridline Racing"] },
+        { sim: "Le Mans Ultimate", series: "LMP2", eventName: "Monza Feature", round: 4, duration: "60 Minutes", podium: ["G. Carter", "A. Torres", "L. Bennett"] }
+      ],
+      standings: [
+        { driver: "J. Walker", wins: 2, podiums: 4, top5: 5, dnf: 0, points: 112 },
+        { driver: "G. Carter", wins: 1, podiums: 3, top5: 5, dnf: 0, points: 104 },
+        { driver: "M. Davis", wins: 1, podiums: 3, top5: 4, dnf: 1, points: 97 },
+        { driver: "A. Torres", wins: 1, podiums: 2, top5: 4, dnf: 0, points: 95 },
+        { driver: "R. Payne", wins: 0, podiums: 2, top5: 4, dnf: 1, points: 90 },
+        { driver: "L. Bennett", wins: 0, podiums: 1, top5: 3, dnf: 0, points: 82 },
+        { driver: "D. Miller", wins: 0, podiums: 1, top5: 2, dnf: 1, points: 75 },
+        { driver: "S. Knight", wins: 0, podiums: 0, top5: 2, dnf: 2, points: 63 }
+      ]
+    };
+
+    function cloneData(data) {
+      return JSON.parse(JSON.stringify(data));
+    }
+
+    async function loadData() {
+      try {
+        const response = await fetch(API_URL, { method: "GET" });
+        if (!response.ok) throw new Error("Failed");
+        const payload = await response.json();
+        if (!Array.isArray(payload.events) || !Array.isArray(payload.standings)) throw new Error("Invalid");
+        return payload;
+      } catch {
+        return cloneData(DEFAULT_DATA);
+      }
+    }
+
+    async function saveData(data) {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error("Failed to save results to Cloudflare.");
+      return response.json();
+    }
+
+    async function resetData() {
+      const response = await fetch(API_URL, { method: "DELETE" });
+      if (!response.ok) throw new Error("Failed to reset results.");
+      return response.json();
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function renderEvents(events) {
+      const eventGrid = document.getElementById("eventGrid");
+      const rows = events.slice().reverse().map((event) => {
+        const podium = event.podium.slice(0, 3);
+        while (podium.length < 3) podium.push("TBD");
+        return `
+          <article class="event-card">
+            <div class="event-series">${escapeHtml(event.sim)} ${escapeHtml(event.series)}</div>
+            <h3 class="event-title">${escapeHtml(event.eventName)}</h3>
+            <div class="event-meta">Round ${escapeHtml(event.round)} - ${escapeHtml(event.duration)}</div>
+            <div class="podium">
+              <div class="podium-row"><span>P1</span><strong>${escapeHtml(podium[0])}</strong></div>
+              <div class="podium-row"><span>P2</span><strong>${escapeHtml(podium[1])}</strong></div>
+              <div class="podium-row"><span>P3</span><strong>${escapeHtml(podium[2])}</strong></div>
+            </div>
+          </article>
+        `;
+      });
+      eventGrid.innerHTML = rows.join("");
+    }
+
+    function renderStandings(standings) {
+      const standingsBody = document.getElementById("standingsBody");
+      const rows = standings.map((driver, index) => `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${escapeHtml(driver.driver)}</td>
+          <td>${driver.wins}</td>
+          <td>${driver.podiums}</td>
+          <td>${driver.top5}</td>
+          <td>${driver.dnf}</td>
+          <td class="pts">${driver.points}</td>
+        </tr>
+      `);
+      standingsBody.innerHTML = rows.join("");
+    }
+
+    function renderHighlights(data) {
+      const highlightsGrid = document.getElementById("highlightsGrid");
+      const standings = data.standings;
+      const totalEvents = data.events.length;
+      if (!standings.length) {
+        highlightsGrid.innerHTML = "";
+        return;
+      }
+
+      const byWins = standings.slice().sort((a, b) => b.wins - a.wins);
+      const byDnf = standings.slice().sort((a, b) => a.dnf - b.dnf || b.points - a.points);
+      const gap = standings.length > 1 ? Math.abs(standings[0].points - standings[1].points) : 0;
+
+      highlightsGrid.innerHTML = `
+        <article class="highlight-card">
+          <div class="highlight-label">Most Wins</div>
+          <div class="highlight-value">${byWins[0].wins}</div>
+          <p class="highlight-text">${escapeHtml(byWins[0].driver)} leads the season win count.</p>
+        </article>
+        <article class="highlight-card">
+          <div class="highlight-label">Cleanest Driver</div>
+          <div class="highlight-value">${byDnf[0].dnf} DNF</div>
+          <p class="highlight-text">${escapeHtml(byDnf[0].driver)} has the best finish consistency so far.</p>
+        </article>
+        <article class="highlight-card">
+          <div class="highlight-label">Title Battle Gap</div>
+          <div class="highlight-value">${gap} PTS</div>
+          <p class="highlight-text">Current gap between P1 and P2 in the championship.</p>
+        </article>
+        <article class="highlight-card">
+          <div class="highlight-label">Results Uploaded</div>
+          <div class="highlight-value">${totalEvents}</div>
+          <p class="highlight-text">Total race events currently tracked on this page.</p>
+        </article>
+      `;
+    }
+
+    function renderAll(data) {
+      data.standings.sort((a, b) => b.points - a.points);
+      renderEvents(data.events);
+      renderStandings(data.standings);
+      renderHighlights(data);
+    }
+
+    function parseCsvLine(line) {
+      const values = [];
+      let current = "";
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i += 1) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            current += '"';
+            i += 1;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (ch === "," && !inQuotes) {
+          values.push(current.trim());
+          current = "";
+        } else {
+          current += ch;
+        }
+      }
+      values.push(current.trim());
+      return values;
+    }
+
+    function headerIndex(headers, aliases) {
+      const normalized = headers.map((h) => h.toLowerCase().trim());
+      return normalized.findIndex((h) => aliases.includes(h));
+    }
+
+    function parseResultsText(text) {
+      const rawLines = text.replace(/\r/g, "").split("\n").map((line) => line.trim()).filter(Boolean);
+      if (rawLines.length < 2) throw new Error("File needs a header row and at least one result row.");
+
+      const headers = parseCsvLine(rawLines[0]);
+      const nameIndex = headerIndex(headers, ["driver", "driver name", "name", "displayname", "team", "team name"]);
+      const posIndex = headerIndex(headers, ["position", "pos", "finish", "final position", "place", "class position"]);
+      const pointsIndex = headerIndex(headers, ["points", "pts", "score"]);
+      const statusIndex = headerIndex(headers, ["status", "result status", "finish status"]);
+
+      if (nameIndex < 0 || posIndex < 0) {
+        throw new Error("Missing required columns. Include driver/name and position/pos.");
+      }
+
+      const results = [];
+      for (let i = 1; i < rawLines.length; i += 1) {
+        const cols = parseCsvLine(rawLines[i]);
+        const driver = (cols[nameIndex] || "").trim();
+        const position = Number.parseInt((cols[posIndex] || "").replace(/[^\d-]/g, ""), 10);
+        if (!driver || !Number.isFinite(position) || position <= 0) continue;
+
+        const maybePoints = Number.parseInt((cols[pointsIndex] || "").replace(/[^\d-]/g, ""), 10);
+        const statusText = String(cols[statusIndex] || "").toLowerCase();
+        const dnf = /dnf|dns|dsq|retired/.test(statusText);
+        const fallbackPoints = Math.max(0, 30 - (position * 2));
+
+        results.push({
+          driver,
+          position,
+          points: Number.isFinite(maybePoints) ? maybePoints : fallbackPoints,
+          dnf
+        });
+      }
+
+      if (!results.length) throw new Error("No valid rows found after parsing file.");
+      results.sort((a, b) => a.position - b.position);
+      return results;
+    }
+
+    function mergeStandings(existing, raceResults) {
+      const map = new Map(existing.map((entry) => [entry.driver.toLowerCase(), { ...entry }]));
+      raceResults.forEach((result) => {
+        const key = result.driver.toLowerCase();
+        const row = map.get(key) || { driver: result.driver, wins: 0, podiums: 0, top5: 0, dnf: 0, points: 0 };
+        row.points += result.points;
+        if (result.position === 1) row.wins += 1;
+        if (result.position <= 3) row.podiums += 1;
+        if (result.position <= 5) row.top5 += 1;
+        if (result.dnf) row.dnf += 1;
+        map.set(key, row);
+      });
+      return Array.from(map.values()).sort((a, b) => b.points - a.points);
+    }
+
+    const state = cloneData(DEFAULT_DATA);
+    loadData().then((serverData) => {
+      state.events = serverData.events;
+      state.standings = serverData.standings;
+      renderAll(state);
+    });
+
+    renderAll(state);
+
+    document.getElementById("uploadForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const status = document.getElementById("uploadStatus");
+      const sim = document.getElementById("sim").value;
+      const series = document.getElementById("series").value.trim();
+      const eventName = document.getElementById("eventName").value.trim();
+      const round = Number.parseInt(document.getElementById("round").value, 10);
+      const duration = document.getElementById("duration").value.trim();
+      const fileInput = document.getElementById("resultsFile");
+      const file = fileInput.files[0];
+
+      if (!file) {
+        status.textContent = "Please select a file before uploading.";
+        return;
+      }
+
+      try {
+        const text = await file.text();
+        const parsed = parseResultsText(text);
+        const podium = parsed.slice(0, 3).map((row) => row.driver);
+
+        state.events.push({ sim, series, eventName, round, duration, podium });
+        state.standings = mergeStandings(state.standings, parsed);
+        await saveData(state);
+        renderAll(state);
+        status.textContent = `Uploaded ${file.name}. Parsed ${parsed.length} finishers from ${sim} and saved to Cloudflare.`;
+        fileInput.value = "";
+      } catch (error) {
+        status.textContent = error.message || "Failed to parse file.";
+      }
+    });
+
+    document.getElementById("resetData").addEventListener("click", async () => {
+      try {
+        await resetData();
+        const reset = cloneData(DEFAULT_DATA);
+        state.events = reset.events;
+        state.standings = reset.standings;
+        renderAll(state);
+        document.getElementById("uploadStatus").textContent = "Results reset to default data in Cloudflare.";
+      } catch (error) {
+        document.getElementById("uploadStatus").textContent = error.message || "Failed to reset data.";
+      }
+    });
+  </script>
 </body>
 </html>
