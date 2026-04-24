@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mid Pack Mafia - Results</title>
-  <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Saira:wght@500;700;800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Saira', sans-serif; background: #000; color: #fff; }
+    body { font-family: 'Saira', sans-serif; font-weight: 500; background: #000; color: #fff; }
 
     nav {
       background: #000;
@@ -130,6 +130,29 @@
       gap: 0.65rem;
       flex-wrap: wrap;
       margin-top: 0.5rem;
+    }
+    .admin-key {
+      margin-top: 0.75rem;
+      max-width: 360px;
+    }
+    .admin-key label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #888;
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 700;
+    }
+    .admin-key input {
+      width: 100%;
+      background: #111;
+      border: 1px solid #222;
+      color: #fff;
+      font-family: 'Saira', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 0.62rem 0.72rem;
     }
     .btn {
       border: 1px solid #ff0000;
@@ -298,7 +321,7 @@
       margin-top: 2rem;
     }
     .footer-copy {
-      font-weight: 400;
+      font-weight: 500;
       font-size: 13px;
       color: #444;
       letter-spacing: 0.08em;
@@ -340,7 +363,7 @@
       <h1>Track the <span>Season Fight</span></h1>
       <p>
         Every week, we update race finishes, podiums, and championship points across the series we run.
-        Check each event result below and see who's climbing in the Mid Pack Mafia standings.
+        Check each event result below, upload new race files, and open any event card to view the full finishing order.
       </p>
     </div>
   </section>
@@ -384,7 +407,11 @@
         <button type="submit" class="btn">Upload Results</button>
         <button type="button" id="resetData" class="btn secondary">Reset to Default Data</button>
       </div>
-      <p class="upload-help">Expected columns include a driver name and finishing position. Supported aliases: driver/name and position/pos/finish/final position. Points and DNF status are optional.</p>
+      <div class="admin-key">
+        <label for="adminKey">Admin Key</label>
+        <input id="adminKey" type="password" placeholder="Required for upload and reset">
+      </div>
+      <p class="upload-help">Expected columns include a driver name and finishing position. Optional fields include qualifying position, points, and DNF/DNS status.</p>
       <div id="uploadStatus" class="upload-status"></div>
     </form>
   </section>
@@ -411,6 +438,7 @@
             <tr>
               <th>Pos</th>
               <th>Driver</th>
+              <th>Quali</th>
               <th>Car #</th>
               <th>Car</th>
               <th>Laps</th>
@@ -431,6 +459,7 @@
   </footer>
   <script>
     const API_URL = "/api/results";
+    const ADMIN_KEY_STORAGE = "mpm-admin-key";
     const DEFAULT_DATA = {
       events: [
         {
@@ -464,10 +493,10 @@
       }
     }
 
-    async function saveData(data) {
+    async function saveData(data, adminKey) {
       const response = await fetch(API_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey || "" },
         body: JSON.stringify(data)
       });
       if (!response.ok) {
@@ -483,8 +512,8 @@
       return response.json();
     }
 
-    async function resetData() {
-      const response = await fetch(API_URL, { method: "DELETE" });
+    async function resetData(adminKey) {
+      const response = await fetch(API_URL, { method: "DELETE", headers: { "x-admin-key": adminKey || "" } });
       if (!response.ok) {
         let message = "Failed to reset results.";
         try {
@@ -540,7 +569,16 @@
       renderEvents(data.events);
     }
 
-    function parseCsvLine(line) {
+    function detectDelimiter(headerLine) {
+      const comma = (headerLine.match(/,/g) || []).length;
+      const semicolon = (headerLine.match(/;/g) || []).length;
+      const tab = (headerLine.match(/\t/g) || []).length;
+      if (tab > comma && tab > semicolon) return "\t";
+      if (semicolon > comma) return ";";
+      return ",";
+    }
+
+    function parseCsvLine(line, delimiter = ",") {
       const values = [];
       let current = "";
       let inQuotes = false;
@@ -553,7 +591,7 @@
           } else {
             inQuotes = !inQuotes;
           }
-        } else if (ch === "," && !inQuotes) {
+        } else if (ch === delimiter && !inQuotes) {
           values.push(current.trim());
           current = "";
         } else {
@@ -573,11 +611,13 @@
       const rawLines = text.replace(/\r/g, "").split("\n").map((line) => line.trim()).filter(Boolean);
       if (rawLines.length < 2) throw new Error("File needs a header row and at least one result row.");
 
-      const headers = parseCsvLine(rawLines[0]);
-      const nameIndex = headerIndex(headers, ["driver", "driver name", "name", "displayname", "team", "team name"]);
-      const posIndex = headerIndex(headers, ["position", "pos", "finish", "final position", "place", "class position"]);
+      const delimiter = detectDelimiter(rawLines[0]);
+      const headers = parseCsvLine(rawLines[0], delimiter);
+      const nameIndex = headerIndex(headers, ["driver", "driver name", "name", "displayname", "display name", "team", "team name", "drivername", "driver_name"]);
+      const posIndex = headerIndex(headers, ["position", "pos", "finish", "final position", "place", "class position", "fin pos", "finish position", "finishposition", "overall position", "overallpos"]);
       const pointsIndex = headerIndex(headers, ["points", "pts", "score"]);
       const statusIndex = headerIndex(headers, ["status", "result status", "finish status"]);
+      const qualiIndex = headerIndex(headers, ["qualifying position", "qualifying", "quali", "q pos", "qpos", "grid", "starting position", "start position"]);
 
       if (nameIndex < 0 || posIndex < 0) {
         throw new Error("Missing required columns. Include driver/name and position/pos.");
@@ -585,7 +625,7 @@
 
       const results = [];
       for (let i = 1; i < rawLines.length; i += 1) {
-        const cols = parseCsvLine(rawLines[i]);
+        const cols = parseCsvLine(rawLines[i], delimiter);
         const driver = (cols[nameIndex] || "").trim();
         const position = Number.parseInt((cols[posIndex] || "").replace(/[^\d-]/g, ""), 10);
         if (!driver || !Number.isFinite(position) || position <= 0) continue;
@@ -599,7 +639,8 @@
           driver,
           position,
           points: Number.isFinite(maybePoints) ? maybePoints : fallbackPoints,
-          dnf
+          dnf,
+          qualifyingPosition: Number.parseInt((cols[qualiIndex] || "").replace(/[^\d-]/g, ""), 10) || ""
         });
       }
 
@@ -676,10 +717,14 @@
       rows.forEach((row) => {
         if (!row || typeof row !== "object") return;
         const driver = String(
-          row.driverName ?? row.driver ?? row.name ?? row.fullName ?? row.shortName ?? row.playerName ?? row.teamName ?? row.id ?? ""
+          row.driverName ?? row.driver ?? row.name ?? row.fullName ?? row.shortName ?? row.playerName ?? row.teamName ?? row.id ??
+          row.display_name ?? row.displayName ?? row.driver_name ?? row.customer_name ?? ""
         ).trim();
         const position = Number.parseInt(
-          String(row.position ?? row.pos ?? row.finishPosition ?? row.finalPosition ?? row.place ?? "").replace(/[^\d-]/g, ""),
+          String(
+            row.position ?? row.pos ?? row.finishPosition ?? row.finalPosition ?? row.place ??
+            row.finish_position ?? row.class_position ?? row.overall_position ?? row.finPos ?? ""
+          ).replace(/[^\d-]/g, ""),
           10
         );
         if (!driver || !Number.isFinite(position) || position <= 0) return;
@@ -701,9 +746,10 @@
           dns,
           carNum: row.carNum ?? row.number ?? row.carNumber ?? "",
           car: row.car ?? row.carModel ?? row.vehicle ?? "",
-          totalLaps: row.totalLaps ?? row.laps ?? "",
-          bestLap: row.bestLap ?? row.fastestLap ?? "",
-          totalTime: row.totalTime ?? row.raceTime ?? row.time ?? ""
+          totalLaps: row.totalLaps ?? row.laps ?? row.laps_complete ?? "",
+          qualifyingPosition: row.qualifyingPosition ?? row.qualiPosition ?? row.qualifying ?? row.grid ?? row.startPosition ?? row.startingPosition ?? row.start_position ?? "",
+          bestLap: row.bestLap ?? row.fastestLap ?? row.fastest_lap ?? "",
+          totalTime: row.totalTime ?? row.raceTime ?? row.time ?? row.total_time ?? ""
         });
       });
 
@@ -738,6 +784,7 @@
           <tr>
             <td>${escapeHtml(row.position)}</td>
             <td>${escapeHtml(row.driver)}</td>
+            <td>${escapeHtml(row.qualifyingPosition || "-")}</td>
             <td>${escapeHtml(row.carNum || "-")}</td>
             <td>${escapeHtml(row.car || "-")}</td>
             <td>${escapeHtml(row.totalLaps || "-")}</td>
@@ -747,7 +794,7 @@
           </tr>
         `;
       });
-      body.innerHTML = rows.join("") || `<tr><td colspan="8">No detailed results were found for this event.</td></tr>`;
+      body.innerHTML = rows.join("") || `<tr><td colspan="9">No detailed results were found for this event.</td></tr>`;
       modal.classList.add("open");
       modal.setAttribute("aria-hidden", "false");
     }
@@ -759,6 +806,12 @@
     });
 
     renderAll(state);
+
+    const adminKeyInput = document.getElementById("adminKey");
+    adminKeyInput.value = localStorage.getItem(ADMIN_KEY_STORAGE) || "";
+    adminKeyInput.addEventListener("input", () => {
+      localStorage.setItem(ADMIN_KEY_STORAGE, adminKeyInput.value.trim());
+    });
 
     document.getElementById("uploadForm").addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -777,11 +830,16 @@
       }
 
       try {
+        const adminKey = adminKeyInput.value.trim();
+        if (!adminKey) {
+          status.textContent = "Enter your admin key to upload.";
+          return;
+        }
         const text = await file.text();
         const isJson = file.name.toLowerCase().endsWith(".json") || file.type.includes("json");
         const parsed = isJson ? parseResultsJson(text) : parseResultsText(text);
         state.events.push({ sim, series, eventName, round, duration, fullResults: parsed });
-        await saveData(state);
+        await saveData(state, adminKey);
         renderAll(state);
         status.textContent = `Uploaded ${file.name}. Parsed ${parsed.length} finishers from ${sim} and saved to Cloudflare.`;
         fileInput.value = "";
@@ -792,7 +850,12 @@
 
     document.getElementById("resetData").addEventListener("click", async () => {
       try {
-        await resetData();
+        const adminKey = adminKeyInput.value.trim();
+        if (!adminKey) {
+          document.getElementById("uploadStatus").textContent = "Enter your admin key to reset data.";
+          return;
+        }
+        await resetData(adminKey);
         const reset = cloneData(DEFAULT_DATA);
         state.events = reset.events;
         renderAll(state);
