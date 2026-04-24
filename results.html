@@ -170,6 +170,7 @@
       border: 1px solid #1a1a1a;
       padding: 1.4rem;
       transition: border-color 0.15s ease;
+      cursor: pointer;
     }
     .event-card:hover { border-color: #ff0000; }
     .event-series {
@@ -209,65 +210,81 @@
       font-weight: 700;
     }
 
-    .table-wrap {
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 1000;
+    }
+    .modal.open { display: flex; }
+    .modal-card {
+      width: 100%;
+      max-width: 920px;
+      max-height: 86vh;
+      overflow: auto;
       border: 1px solid #1a1a1a;
       background: #0a0a0a;
-      overflow-x: auto;
+      padding: 1.2rem;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 700px;
-    }
-    th, td {
-      padding: 0.95rem 1rem;
-      text-align: left;
-      border-bottom: 1px solid #1a1a1a;
-      white-space: nowrap;
-      font-size: 14px;
-    }
-    th {
-      color: #ff0000;
-      font-size: 12px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      font-weight: 700;
-      background: #0d0d0d;
-    }
-    tbody tr:hover { background: #101010; }
-    td:first-child, th:first-child { width: 70px; }
-    td:last-child, th:last-child { text-align: right; }
-    .pts { font-weight: 700; color: #fff; }
-
-    .highlights {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
       gap: 1rem;
     }
-    .highlight-card {
-      background: #0a0a0a;
-      border: 1px solid #1a1a1a;
-      padding: 1.25rem;
+    .modal-title {
+      font-size: 24px;
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 1.2;
     }
-    .highlight-label {
+    .modal-meta {
+      color: #888;
+      font-size: 14px;
+      margin-top: 0.2rem;
+    }
+    .close-btn {
+      border: 1px solid #ff0000;
+      background: transparent;
+      color: #ff0000;
+      font-family: 'Saira', sans-serif;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      padding: 0.55rem 0.8rem;
+      cursor: pointer;
+    }
+    .results-table-wrap {
+      border: 1px solid #1a1a1a;
+      overflow-x: auto;
+    }
+    .results-table {
+      width: 100%;
+      min-width: 640px;
+      border-collapse: collapse;
+    }
+    .results-table th,
+    .results-table td {
+      padding: 0.8rem 0.9rem;
+      border-bottom: 1px solid #1a1a1a;
+      text-align: left;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .results-table th {
       color: #ff0000;
       text-transform: uppercase;
       letter-spacing: 0.12em;
       font-size: 11px;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
     }
-    .highlight-value {
-      font-size: 28px;
-      font-weight: 800;
-      margin-bottom: 0.25rem;
-      line-height: 1;
-    }
-    .highlight-text {
-      color: #888;
-      font-size: 14px;
-      line-height: 1.6;
-    }
+    .results-table td:last-child,
+    .results-table th:last-child { text-align: right; }
 
     footer {
       background: #000;
@@ -379,34 +396,34 @@
     <div id="eventGrid" class="event-grid"></div>
   </section>
 
-  <section class="section">
-    <div class="section-label">Championship</div>
-    <h2 class="section-title">Driver Standings</h2>
-    <p class="section-intro">Overall points after five rounds. Update this table each race week.</p>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Pos</th>
-            <th>Driver</th>
-            <th>Wins</th>
-            <th>Podiums</th>
-            <th>Top 5</th>
-            <th>DNF</th>
-            <th>Points</th>
-          </tr>
-        </thead>
-        <tbody id="standingsBody"></tbody>
-      </table>
+  <div id="resultModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <div id="modalTitle" class="modal-title"></div>
+          <div id="modalMeta" class="modal-meta"></div>
+        </div>
+        <button id="closeModal" class="close-btn" type="button">Close</button>
+      </div>
+      <div class="results-table-wrap">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Pos</th>
+              <th>Driver</th>
+              <th>Car #</th>
+              <th>Car</th>
+              <th>Laps</th>
+              <th>Best Lap</th>
+              <th>Total Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="modalResultsBody"></tbody>
+        </table>
+      </div>
     </div>
-  </section>
-
-  <section class="section">
-    <div class="section-label">Season Stats</div>
-    <h2 class="section-title">Recent Highlights</h2>
-    <p class="section-intro">Quick race week snapshot from the most recent rounds.</p>
-    <div id="highlightsGrid" class="highlights"></div>
-  </section>
+  </div>
 
   <footer>
     <div class="footer-copy">&copy; 2025 Mid Pack Mafia. All rights reserved.</div>
@@ -416,19 +433,18 @@
     const API_URL = "/api/results";
     const DEFAULT_DATA = {
       events: [
-        { sim: "iRacing", series: "GT3", eventName: "Road Atlanta Sprint", round: 5, duration: "45 Minutes", podium: ["J. Walker", "M. Davis", "R. Payne"] },
-        { sim: "ACC", series: "Team Endurance", eventName: "Spa 2H", round: 3, duration: "120 Minutes", podium: ["Team Nightshift", "MPM Alpha", "Gridline Racing"] },
-        { sim: "Le Mans Ultimate", series: "LMP2", eventName: "Monza Feature", round: 4, duration: "60 Minutes", podium: ["G. Carter", "A. Torres", "L. Bennett"] }
-      ],
-      standings: [
-        { driver: "J. Walker", wins: 2, podiums: 4, top5: 5, dnf: 0, points: 112 },
-        { driver: "G. Carter", wins: 1, podiums: 3, top5: 5, dnf: 0, points: 104 },
-        { driver: "M. Davis", wins: 1, podiums: 3, top5: 4, dnf: 1, points: 97 },
-        { driver: "A. Torres", wins: 1, podiums: 2, top5: 4, dnf: 0, points: 95 },
-        { driver: "R. Payne", wins: 0, podiums: 2, top5: 4, dnf: 1, points: 90 },
-        { driver: "L. Bennett", wins: 0, podiums: 1, top5: 3, dnf: 0, points: 82 },
-        { driver: "D. Miller", wins: 0, podiums: 1, top5: 2, dnf: 1, points: 75 },
-        { driver: "S. Knight", wins: 0, podiums: 0, top5: 2, dnf: 2, points: 63 }
+        {
+          sim: "iRacing",
+          series: "GT3",
+          eventName: "Road Atlanta Sprint",
+          round: 5,
+          duration: "45 Minutes",
+          fullResults: [
+            { position: 1, driver: "J. Walker", carNum: "12", car: "Porsche 911 GT3", totalLaps: 28, bestLap: "1:22.845", totalTime: "45:13.300", dnf: false, dns: false },
+            { position: 2, driver: "M. Davis", carNum: "77", car: "BMW M4 GT3", totalLaps: 28, bestLap: "1:23.101", totalTime: "45:19.902", dnf: false, dns: false },
+            { position: 3, driver: "R. Payne", carNum: "22", car: "Ferrari 296 GT3", totalLaps: 28, bestLap: "1:23.442", totalTime: "45:24.980", dnf: false, dns: false }
+          ]
+        }
       ]
     };
 
@@ -441,7 +457,7 @@
         const response = await fetch(API_URL, { method: "GET" });
         if (!response.ok) throw new Error("Failed");
         const payload = await response.json();
-        if (!Array.isArray(payload.events) || !Array.isArray(payload.standings)) throw new Error("Invalid");
+        if (!Array.isArray(payload.events)) throw new Error("Invalid");
         return payload;
       } catch {
         return cloneData(DEFAULT_DATA);
@@ -476,10 +492,12 @@
     function renderEvents(events) {
       const eventGrid = document.getElementById("eventGrid");
       const rows = events.slice().reverse().map((event) => {
-        const podium = event.podium.slice(0, 3);
+        const fullResults = Array.isArray(event.fullResults) ? event.fullResults : [];
+        const podium = fullResults.slice(0, 3).map((row) => row.driver);
         while (podium.length < 3) podium.push("TBD");
+        const eventIndex = events.indexOf(event);
         return `
-          <article class="event-card">
+          <article class="event-card" data-event-index="${eventIndex}">
             <div class="event-series">${escapeHtml(event.sim)} ${escapeHtml(event.series)}</div>
             <h3 class="event-title">${escapeHtml(event.eventName)}</h3>
             <div class="event-meta">Round ${escapeHtml(event.round)} - ${escapeHtml(event.duration)}</div>
@@ -492,66 +510,16 @@
         `;
       });
       eventGrid.innerHTML = rows.join("");
-    }
-
-    function renderStandings(standings) {
-      const standingsBody = document.getElementById("standingsBody");
-      const rows = standings.map((driver, index) => `
-        <tr>
-          <td>${index + 1}</td>
-          <td>${escapeHtml(driver.driver)}</td>
-          <td>${driver.wins}</td>
-          <td>${driver.podiums}</td>
-          <td>${driver.top5}</td>
-          <td>${driver.dnf}</td>
-          <td class="pts">${driver.points}</td>
-        </tr>
-      `);
-      standingsBody.innerHTML = rows.join("");
-    }
-
-    function renderHighlights(data) {
-      const highlightsGrid = document.getElementById("highlightsGrid");
-      const standings = data.standings;
-      const totalEvents = data.events.length;
-      if (!standings.length) {
-        highlightsGrid.innerHTML = "";
-        return;
-      }
-
-      const byWins = standings.slice().sort((a, b) => b.wins - a.wins);
-      const byDnf = standings.slice().sort((a, b) => a.dnf - b.dnf || b.points - a.points);
-      const gap = standings.length > 1 ? Math.abs(standings[0].points - standings[1].points) : 0;
-
-      highlightsGrid.innerHTML = `
-        <article class="highlight-card">
-          <div class="highlight-label">Most Wins</div>
-          <div class="highlight-value">${byWins[0].wins}</div>
-          <p class="highlight-text">${escapeHtml(byWins[0].driver)} leads the season win count.</p>
-        </article>
-        <article class="highlight-card">
-          <div class="highlight-label">Cleanest Driver</div>
-          <div class="highlight-value">${byDnf[0].dnf} DNF</div>
-          <p class="highlight-text">${escapeHtml(byDnf[0].driver)} has the best finish consistency so far.</p>
-        </article>
-        <article class="highlight-card">
-          <div class="highlight-label">Title Battle Gap</div>
-          <div class="highlight-value">${gap} PTS</div>
-          <p class="highlight-text">Current gap between P1 and P2 in the championship.</p>
-        </article>
-        <article class="highlight-card">
-          <div class="highlight-label">Results Uploaded</div>
-          <div class="highlight-value">${totalEvents}</div>
-          <p class="highlight-text">Total race events currently tracked on this page.</p>
-        </article>
-      `;
+      eventGrid.querySelectorAll(".event-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          const index = Number.parseInt(card.getAttribute("data-event-index"), 10);
+          openEventModal(events[index]);
+        });
+      });
     }
 
     function renderAll(data) {
-      data.standings.sort((a, b) => b.points - a.points);
       renderEvents(data.events);
-      renderStandings(data.standings);
-      renderHighlights(data);
     }
 
     function parseCsvLine(line) {
@@ -629,7 +597,7 @@
 
       const commonKeys = [
         "results", "entries", "drivers", "classification", "standings",
-        "sessionResult", "sessionResults", "leaderboard", "rows", "data"
+        "sessionResult", "sessionResults", "leaderboard", "rows", "data", "result"
       ];
 
       for (const key of commonKeys) {
@@ -664,7 +632,7 @@
       rows.forEach((row) => {
         if (!row || typeof row !== "object") return;
         const driver = String(
-          row.driverName ?? row.driver ?? row.name ?? row.fullName ?? row.shortName ?? row.playerName ?? row.teamName ?? ""
+          row.driverName ?? row.driver ?? row.name ?? row.fullName ?? row.shortName ?? row.playerName ?? row.teamName ?? row.id ?? ""
         ).trim();
         const position = Number.parseInt(
           String(row.position ?? row.pos ?? row.finishPosition ?? row.finalPosition ?? row.place ?? "").replace(/[^\d-]/g, ""),
@@ -672,19 +640,26 @@
         );
         if (!driver || !Number.isFinite(position) || position <= 0) return;
 
-        const pointsValue = Number.parseInt(
-          String(row.points ?? row.pts ?? row.score ?? "").replace(/[^\d-]/g, ""),
+        const pointsValue = Number.parseFloat(
+          String(row.points ?? row.pts ?? row.score ?? row.pointsGiven ?? row.pointTotal ?? "").replace(/[^\d.-]/g, ""),
           10
         );
         const statusText = String(row.status ?? row.resultStatus ?? row.finishStatus ?? "").toLowerCase();
-        const dnf = /dnf|dns|dsq|retired/.test(statusText);
+        const dnf = Boolean(row.dnf) || /dnf|dns|dsq|retired/.test(statusText);
+        const dns = Boolean(row.dns) || /dns/.test(statusText);
         const fallbackPoints = Math.max(0, 30 - (position * 2));
 
         mapped.push({
           driver,
           position,
           points: Number.isFinite(pointsValue) ? pointsValue : fallbackPoints,
-          dnf
+          dnf,
+          dns,
+          carNum: row.carNum ?? row.number ?? row.carNumber ?? "",
+          car: row.car ?? row.carModel ?? row.vehicle ?? "",
+          totalLaps: row.totalLaps ?? row.laps ?? "",
+          bestLap: row.bestLap ?? row.fastestLap ?? "",
+          totalTime: row.totalTime ?? row.raceTime ?? row.time ?? ""
         });
       });
 
@@ -696,25 +671,46 @@
       return mapped;
     }
 
-    function mergeStandings(existing, raceResults) {
-      const map = new Map(existing.map((entry) => [entry.driver.toLowerCase(), { ...entry }]));
-      raceResults.forEach((result) => {
-        const key = result.driver.toLowerCase();
-        const row = map.get(key) || { driver: result.driver, wins: 0, podiums: 0, top5: 0, dnf: 0, points: 0 };
-        row.points += result.points;
-        if (result.position === 1) row.wins += 1;
-        if (result.position <= 3) row.podiums += 1;
-        if (result.position <= 5) row.top5 += 1;
-        if (result.dnf) row.dnf += 1;
-        map.set(key, row);
+    function formatMs(value) {
+      const n = Number(value);
+      if (!Number.isFinite(n) || n <= 0) return value || "-";
+      const totalSeconds = Math.floor(n / 1000);
+      const ms = String(n % 1000).padStart(3, "0");
+      const seconds = totalSeconds % 60;
+      const minutes = Math.floor(totalSeconds / 60) % 60;
+      const hours = Math.floor(totalSeconds / 3600);
+      if (hours > 0) return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${ms}`;
+      return `${minutes}:${String(seconds).padStart(2, "0")}.${ms}`;
+    }
+
+    function openEventModal(eventData) {
+      const modal = document.getElementById("resultModal");
+      document.getElementById("modalTitle").textContent = eventData.eventName || "Race Results";
+      document.getElementById("modalMeta").textContent = `${eventData.sim} ${eventData.series} - Round ${eventData.round} - ${eventData.duration}`;
+      const body = document.getElementById("modalResultsBody");
+      const rows = (eventData.fullResults || []).slice().sort((a, b) => a.position - b.position).map((row) => {
+        const status = row.dns ? "DNS" : row.dnf ? "DNF" : "Finished";
+        return `
+          <tr>
+            <td>${escapeHtml(row.position)}</td>
+            <td>${escapeHtml(row.driver)}</td>
+            <td>${escapeHtml(row.carNum || "-")}</td>
+            <td>${escapeHtml(row.car || "-")}</td>
+            <td>${escapeHtml(row.totalLaps || "-")}</td>
+            <td>${escapeHtml(formatMs(row.bestLap))}</td>
+            <td>${escapeHtml(formatMs(row.totalTime))}</td>
+            <td>${status}</td>
+          </tr>
+        `;
       });
-      return Array.from(map.values()).sort((a, b) => b.points - a.points);
+      body.innerHTML = rows.join("") || `<tr><td colspan="8">No detailed results were found for this event.</td></tr>`;
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
     }
 
     const state = cloneData(DEFAULT_DATA);
     loadData().then((serverData) => {
       state.events = serverData.events;
-      state.standings = serverData.standings;
       renderAll(state);
     });
 
@@ -740,10 +736,7 @@
         const text = await file.text();
         const isJson = file.name.toLowerCase().endsWith(".json") || file.type.includes("json");
         const parsed = isJson ? parseResultsJson(text) : parseResultsText(text);
-        const podium = parsed.slice(0, 3).map((row) => row.driver);
-
-        state.events.push({ sim, series, eventName, round, duration, podium });
-        state.standings = mergeStandings(state.standings, parsed);
+        state.events.push({ sim, series, eventName, round, duration, fullResults: parsed });
         await saveData(state);
         renderAll(state);
         status.textContent = `Uploaded ${file.name}. Parsed ${parsed.length} finishers from ${sim} and saved to Cloudflare.`;
@@ -758,11 +751,24 @@
         await resetData();
         const reset = cloneData(DEFAULT_DATA);
         state.events = reset.events;
-        state.standings = reset.standings;
         renderAll(state);
         document.getElementById("uploadStatus").textContent = "Results reset to default data in Cloudflare.";
       } catch (error) {
         document.getElementById("uploadStatus").textContent = error.message || "Failed to reset data.";
+      }
+    });
+
+    document.getElementById("closeModal").addEventListener("click", () => {
+      const modal = document.getElementById("resultModal");
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+    });
+
+    document.getElementById("resultModal").addEventListener("click", (event) => {
+      if (event.target.id === "resultModal") {
+        const modal = document.getElementById("resultModal");
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
       }
     });
   </script>
