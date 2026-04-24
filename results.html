@@ -649,55 +649,59 @@
       return results;
     }
 
-    function flattenJsonRows(value) {
+    function extractRaceRowsFromJson(value) {
       if (!value) return [];
+      const candidates = [];
 
-      const commonKeys = [
-        "results", "entries", "drivers", "classification", "standings",
-        "sessionResult", "sessionResults", "leaderboard", "rows", "data", "result"
-      ];
+      function rowLooksLikeResult(row) {
+        if (!row || typeof row !== "object") return false;
+        return (
+          "position" in row || "pos" in row || "finishPosition" in row || "finalPosition" in row ||
+          "finish_position" in row || "class_position" in row || "overall_position" in row
+        );
+      }
 
-      function collectFromNode(node, output) {
+      function collect(node, path = [], parent = null) {
         if (!node) return;
-
         if (Array.isArray(node)) {
-          for (const item of node) {
-            if (item && typeof item === "object") {
-              if (Array.isArray(item.result)) {
-                collectFromNode(item.result, output);
-              } else if (Array.isArray(item.results)) {
-                collectFromNode(item.results, output);
-              } else if (
-                "position" in item || "pos" in item || "finishPosition" in item || "finalPosition" in item
-              ) {
-                output.push(item);
-              } else {
-                collectFromNode(item, output);
-              }
+          if (node.length && node.every((item) => rowLooksLikeResult(item) || (item && typeof item === "object"))) {
+            const validRows = node.filter((item) => rowLooksLikeResult(item));
+            if (validRows.length) {
+              const parentText = parent && typeof parent === "object"
+                ? JSON.stringify({
+                  name: parent.name,
+                  simsession_name: parent.simsession_name,
+                  session_name: parent.session_name,
+                  sessionName: parent.sessionName,
+                  type: parent.type
+                }).toLowerCase()
+                : "";
+
+              let score = validRows.length;
+              if (/(race|feature|final|main)/.test(parentText)) score += 100;
+              if (/(qual|practice|warmup|heat)/.test(parentText)) score -= 60;
+              if (validRows.some((r) => "totalLaps" in r || "laps" in r || "laps_complete" in r)) score += 20;
+              if (validRows.some((r) => "totalTime" in r || "raceTime" in r || "total_time" in r)) score += 20;
+              if (path.some((p) => /result/i.test(String(p)))) score += 10;
+
+              candidates.push({ rows: validRows, score });
             }
           }
+
+          node.forEach((child, index) => collect(child, [...path, index], parent));
           return;
         }
 
         if (typeof node !== "object") return;
-
-        for (const key of commonKeys) {
-          if (Array.isArray(node[key])) {
-            collectFromNode(node[key], output);
-          }
-        }
-
         for (const key of Object.keys(node)) {
-          const nested = node[key];
-          if (nested && typeof nested === "object") {
-            collectFromNode(nested, output);
-          }
+          collect(node[key], [...path, key], node);
         }
       }
 
-      const output = [];
-      collectFromNode(value, output);
-      return output;
+      collect(value);
+      if (!candidates.length) return [];
+      candidates.sort((a, b) => b.score - a.score);
+      return candidates[0].rows;
     }
 
     function parseResultsJson(text) {
@@ -708,7 +712,7 @@
         throw new Error("Invalid JSON file.");
       }
 
-      const rows = flattenJsonRows(parsedJson);
+      const rows = extractRaceRowsFromJson(parsedJson);
       if (!rows.length) {
         throw new Error("Could not find results rows in JSON. Looking for arrays like results/entries/drivers.");
       }
@@ -757,8 +761,27 @@
         throw new Error("JSON parsed, but no valid driver/position rows were found.");
       }
 
-      mapped.sort((a, b) => a.position - b.position);
-      return mapped;
+      const deduped = [];
+      const byDriver = new Map();
+      mapped.forEach((row) => {
+        const key = row.driver.toLowerCase();
+        const existing = byDriver.get(key);
+        if (!existing) {
+          byDriver.set(key, row);
+          return;
+        }
+
+        const existingPos = Number(existing.position) || 9999;
+        const rowPos = Number(row.position) || 9999;
+        const existingLaps = Number(existing.totalLaps) || 0;
+        const rowLaps = Number(row.totalLaps) || 0;
+        const shouldReplace = rowPos < existingPos || (rowPos === existingPos && rowLaps > existingLaps);
+        if (shouldReplace) byDriver.set(key, row);
+      });
+
+      byDriver.forEach((row) => deduped.push(row));
+      deduped.sort((a, b) => a.position - b.position);
+      return deduped;
     }
 
     function formatMs(value) {
