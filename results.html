@@ -383,12 +383,16 @@
           </select>
         </div>
         <div>
-          <label for="series">Series</label>
-          <input id="series" type="text" placeholder="GT3 Sprint" required>
+          <label for="seriesSelect">Series</label>
+          <select id="seriesSelect" required></select>
+        </div>
+        <div>
+          <label for="seriesCustom">New Series (optional)</label>
+          <input id="seriesCustom" type="text" placeholder="Enter new series name">
         </div>
         <div>
           <label for="eventName">Event</label>
-          <input id="eventName" type="text" placeholder="Road Atlanta Sprint" required>
+          <input id="eventName" type="text" placeholder="Road Atlanta Sprint (or auto from JSON)">
         </div>
         <div>
           <label for="round">Round</label>
@@ -396,7 +400,7 @@
         </div>
         <div>
           <label for="duration">Duration</label>
-          <input id="duration" type="text" placeholder="45 Minutes" required>
+          <input id="duration" type="text" placeholder="45 Minutes (or auto from JSON)">
         </div>
         <div>
           <label for="resultsFile">Results File</label>
@@ -417,9 +421,10 @@
   </section>
 
   <section class="section">
-    <div class="section-label">Latest Race Week</div>
-    <h2 class="section-title">Event Results</h2>
-    <p class="section-intro">Recent rounds from each platform with the current podium finishers.</p>
+    <div class="section-label">Results Browser</div>
+    <h2 class="section-title">Browse Results</h2>
+    <p class="section-intro">Select a game, then a series, then open a race card to view full results.</p>
+    <div id="resultsCrumbs" class="upload-actions" style="margin-bottom:1rem;"></div>
     <div id="eventGrid" class="event-grid"></div>
   </section>
 
@@ -536,18 +541,111 @@
         .replaceAll("'", "&#39;");
     }
 
-    function renderEvents(events) {
+    const viewState = { level: "games", sim: "", series: "" };
+
+    function groupBySim(events) {
+      const map = new Map();
+      events.forEach((event) => {
+        const key = event.sim || "Unknown Sim";
+        if (!map.has(key)) map.set(key, []);
+        map.get(key).push(event);
+      });
+      return map;
+    }
+
+    function groupBySeries(events, sim) {
+      const map = new Map();
+      events.filter((event) => event.sim === sim).forEach((event) => {
+        const key = event.series || "General";
+        if (!map.has(key)) map.set(key, []);
+        map.get(key).push(event);
+      });
+      return map;
+    }
+
+    function renderCrumbs() {
+      const crumbs = document.getElementById("resultsCrumbs");
+      let html = `<button class="btn secondary" type="button" data-crumb="games">Games</button>`;
+      if (viewState.sim) html += `<button class="btn secondary" type="button" data-crumb="sim">${escapeHtml(viewState.sim)}</button>`;
+      if (viewState.series) html += `<button class="btn secondary" type="button" data-crumb="series">${escapeHtml(viewState.series)}</button>`;
+      crumbs.innerHTML = html;
+      crumbs.querySelectorAll("[data-crumb]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const target = btn.getAttribute("data-crumb");
+          if (target === "games") {
+            viewState.level = "games";
+            viewState.sim = "";
+            viewState.series = "";
+          } else if (target === "sim") {
+            viewState.level = "series";
+            viewState.series = "";
+          } else if (target === "series") {
+            viewState.level = "events";
+          }
+          renderAll(state);
+        });
+      });
+    }
+
+    function renderGames(events) {
       const eventGrid = document.getElementById("eventGrid");
-      const rows = events.slice().reverse().map((event) => {
+      const simMap = groupBySim(events);
+      const rows = Array.from(simMap.entries()).map(([sim, simEvents]) => `
+        <article class="event-card" data-sim="${escapeHtml(sim)}">
+          <div class="event-series">Game</div>
+          <h3 class="event-title">${escapeHtml(sim)}</h3>
+          <div class="event-meta">${simEvents.length} race event${simEvents.length === 1 ? "" : "s"} stored</div>
+          <div class="podium"><div class="podium-row"><span>Click</span><strong>View Series</strong></div></div>
+        </article>
+      `);
+      eventGrid.innerHTML = rows.join("");
+      eventGrid.querySelectorAll("[data-sim]").forEach((card) => {
+        card.addEventListener("click", () => {
+          viewState.level = "series";
+          viewState.sim = card.getAttribute("data-sim");
+          viewState.series = "";
+          renderAll(state);
+        });
+      });
+    }
+
+    function renderSeries(events) {
+      const eventGrid = document.getElementById("eventGrid");
+      const seriesMap = groupBySeries(events, viewState.sim);
+      const rows = Array.from(seriesMap.entries()).map(([series, seriesEvents]) => `
+        <article class="event-card" data-series="${escapeHtml(series)}">
+          <div class="event-series">${escapeHtml(viewState.sim)}</div>
+          <h3 class="event-title">${escapeHtml(series)}</h3>
+          <div class="event-meta">${seriesEvents.length} race event${seriesEvents.length === 1 ? "" : "s"} stored</div>
+          <div class="podium"><div class="podium-row"><span>Click</span><strong>View Races</strong></div></div>
+        </article>
+      `);
+      eventGrid.innerHTML = rows.join("") || `<div class="event-meta">No series uploaded yet for this game.</div>`;
+      eventGrid.querySelectorAll("[data-series]").forEach((card) => {
+        card.addEventListener("click", () => {
+          viewState.level = "events";
+          viewState.series = card.getAttribute("data-series");
+          renderAll(state);
+        });
+      });
+    }
+
+    function renderEventCards(events) {
+      const eventGrid = document.getElementById("eventGrid");
+      const filtered = events
+        .filter((event) => event.sim === viewState.sim && event.series === viewState.series)
+        .slice()
+        .reverse();
+      const rows = filtered.map((event) => {
         const fullResults = Array.isArray(event.fullResults) ? event.fullResults : [];
         const podium = fullResults.slice(0, 3).map((row) => row.driver);
         while (podium.length < 3) podium.push("TBD");
         const eventIndex = events.indexOf(event);
         return `
           <article class="event-card" data-event-index="${eventIndex}">
-            <div class="event-series">${escapeHtml(event.sim)} ${escapeHtml(event.series)}</div>
+            <div class="event-series">${escapeHtml(event.track || viewState.sim)} - ${escapeHtml(viewState.series)}</div>
             <h3 class="event-title">${escapeHtml(event.eventName)}</h3>
-            <div class="event-meta">Round ${escapeHtml(event.round)} - ${escapeHtml(event.duration)}</div>
+            <div class="event-meta">Round ${escapeHtml(event.round)} - ${escapeHtml(event.duration || "Duration TBD")}</div>
             <div class="podium">
               <div class="podium-row"><span>P1</span><strong>${escapeHtml(podium[0])}</strong></div>
               <div class="podium-row"><span>P2</span><strong>${escapeHtml(podium[1])}</strong></div>
@@ -556,7 +654,7 @@
           </article>
         `;
       });
-      eventGrid.innerHTML = rows.join("");
+      eventGrid.innerHTML = rows.join("") || `<div class="event-meta">No race events uploaded yet for this series.</div>`;
       eventGrid.querySelectorAll(".event-card").forEach((card) => {
         card.addEventListener("click", () => {
           const index = Number.parseInt(card.getAttribute("data-event-index"), 10);
@@ -566,7 +664,15 @@
     }
 
     function renderAll(data) {
-      renderEvents(data.events);
+      renderCrumbs();
+      if (viewState.level === "games") {
+        renderGames(data.events);
+      } else if (viewState.level === "series") {
+        renderSeries(data.events);
+      } else {
+        renderEventCards(data.events);
+      }
+      updateSeriesDropdown();
     }
 
     function detectDelimiter(headerLine) {
@@ -646,7 +752,7 @@
 
       if (!results.length) throw new Error("No valid rows found after parsing file.");
       results.sort((a, b) => a.position - b.position);
-      return results;
+      return { rows: results, meta: {} };
     }
 
     function extractRaceRowsFromJson(value) {
@@ -727,9 +833,8 @@
         return raceRows;
       }
 
-      const rows = extractIRacingRows(parsedJson).length
-        ? extractIRacingRows(parsedJson)
-        : extractRaceRowsFromJson(parsedJson);
+      const iracingRows = extractIRacingRows(parsedJson);
+      const rows = iracingRows.length ? iracingRows : extractRaceRowsFromJson(parsedJson);
       if (!rows.length) {
         throw new Error("Could not find results rows in JSON. Looking for arrays like results/entries/drivers.");
       }
@@ -820,7 +925,27 @@
 
       byDriver.forEach((row) => deduped.push(row));
       deduped.sort((a, b) => a.position - b.position);
-      return deduped;
+
+      let track = "";
+      let duration = "";
+      if (parsedJson && parsedJson.type === "event_result" && parsedJson.data) {
+        track = parsedJson.data.track?.track_name || "";
+        const raceSummary = parsedJson.data.race_summary || {};
+        const laps = Number(raceSummary.laps_complete ?? parsedJson.data.event_laps_complete);
+        const avgLap = Number(raceSummary.average_lap ?? parsedJson.data.event_average_lap);
+        const derivedMs = Number.isFinite(laps) && Number.isFinite(avgLap) ? Math.round(laps * avgLap) : 0;
+        duration = derivedMs > 0 ? formatMs(derivedMs) : "";
+      } else if (Array.isArray(parsedJson) && parsedJson.length && typeof parsedJson[0] === "object") {
+        const first = parsedJson[0];
+        track = first.track ?? first.trackName ?? first.circuit ?? first.circuitName ?? "";
+        const topTime = deduped.length ? Number(deduped[0].totalTime) : 0;
+        duration = Number.isFinite(topTime) && topTime > 0 ? formatMs(topTime) : "";
+      } else if (parsedJson && typeof parsedJson === "object") {
+        track = parsedJson.track ?? parsedJson.trackName ?? parsedJson.circuit ?? "";
+        duration = parsedJson.duration ?? parsedJson.raceDuration ?? parsedJson.sessionDuration ?? "";
+      }
+
+      return { rows: deduped, meta: { track, duration } };
     }
 
     function formatMs(value) {
@@ -838,7 +963,13 @@
     function openEventModal(eventData) {
       const modal = document.getElementById("resultModal");
       document.getElementById("modalTitle").textContent = eventData.eventName || "Race Results";
-      document.getElementById("modalMeta").textContent = `${eventData.sim} ${eventData.series} - Round ${eventData.round} - ${eventData.duration}`;
+      const metaParts = [
+        `${eventData.sim} ${eventData.series}`,
+        eventData.track ? eventData.track : "",
+        `Round ${eventData.round}`,
+        eventData.duration || ""
+      ].filter(Boolean);
+      document.getElementById("modalMeta").textContent = metaParts.join(" - ");
       const body = document.getElementById("modalResultsBody");
       const rows = (eventData.fullResults || []).slice().sort((a, b) => a.position - b.position).map((row) => {
         const status = row.dns ? "DNS" : row.dnf ? "DNF" : "Finished";
@@ -861,6 +992,36 @@
       modal.setAttribute("aria-hidden", "false");
     }
 
+    function getSeriesForSim(sim) {
+      const unique = new Set(
+        state.events
+          .filter((event) => event.sim === sim && event.series)
+          .map((event) => event.series)
+      );
+      return Array.from(unique).sort((a, b) => a.localeCompare(b));
+    }
+
+    function updateSeriesDropdown() {
+      const sim = document.getElementById("sim").value;
+      const seriesSelect = document.getElementById("seriesSelect");
+      const seriesCustom = document.getElementById("seriesCustom");
+      const seriesValues = getSeriesForSim(sim);
+      const options = seriesValues
+        .map((series) => `<option value="${escapeHtml(series)}">${escapeHtml(series)}</option>`)
+        .concat(['<option value="__new__">+ Add New Series</option>']);
+      seriesSelect.innerHTML = options.join("");
+      if (seriesValues.length) {
+        seriesSelect.value = seriesValues[0];
+        seriesCustom.style.display = "none";
+        seriesCustom.required = false;
+      } else {
+        seriesSelect.value = "__new__";
+        seriesCustom.style.display = "block";
+        seriesCustom.required = true;
+      }
+      seriesCustom.value = "";
+    }
+
     const state = cloneData(DEFAULT_DATA);
     loadData().then((serverData) => {
       state.events = serverData.events;
@@ -875,19 +1036,36 @@
       localStorage.setItem(ADMIN_KEY_STORAGE, adminKeyInput.value.trim());
     });
 
+    document.getElementById("sim").addEventListener("change", () => {
+      updateSeriesDropdown();
+    });
+
+    document.getElementById("seriesSelect").addEventListener("change", (event) => {
+      const seriesCustom = document.getElementById("seriesCustom");
+      const isNew = event.target.value === "__new__";
+      seriesCustom.style.display = isNew ? "block" : "none";
+      seriesCustom.required = isNew;
+    });
+
     document.getElementById("uploadForm").addEventListener("submit", async (event) => {
       event.preventDefault();
       const status = document.getElementById("uploadStatus");
       const sim = document.getElementById("sim").value;
-      const series = document.getElementById("series").value.trim();
-      const eventName = document.getElementById("eventName").value.trim();
+      const seriesSelectValue = document.getElementById("seriesSelect").value;
+      const seriesCustomValue = document.getElementById("seriesCustom").value.trim();
+      const series = seriesSelectValue === "__new__" ? seriesCustomValue : seriesSelectValue;
+      const eventNameInput = document.getElementById("eventName").value.trim();
       const round = Number.parseInt(document.getElementById("round").value, 10);
-      const duration = document.getElementById("duration").value.trim();
+      const durationInput = document.getElementById("duration").value.trim();
       const fileInput = document.getElementById("resultsFile");
       const file = fileInput.files[0];
 
       if (!file) {
         status.textContent = "Please select a file before uploading.";
+        return;
+      }
+      if (!series) {
+        status.textContent = "Select an existing series or enter a new series.";
         return;
       }
 
@@ -900,10 +1078,23 @@
         const text = await file.text();
         const isJson = file.name.toLowerCase().endsWith(".json") || file.type.includes("json");
         const parsed = isJson ? parseResultsJson(text) : parseResultsText(text);
-        state.events.push({ sim, series, eventName, round, duration, fullResults: parsed });
+        const finalEventName = eventNameInput || parsed.meta.track || `Round ${round}`;
+        const finalDuration = durationInput || parsed.meta.duration || "";
+        state.events.push({
+          sim,
+          series,
+          eventName: finalEventName,
+          round,
+          duration: finalDuration,
+          track: parsed.meta.track || "",
+          fullResults: parsed.rows
+        });
         await saveData(state, adminKey);
+        viewState.level = "events";
+        viewState.sim = sim;
+        viewState.series = series;
         renderAll(state);
-        status.textContent = `Uploaded ${file.name}. Parsed ${parsed.length} finishers from ${sim} and saved to Cloudflare.`;
+        status.textContent = `Uploaded ${file.name}. Parsed ${parsed.rows.length} finishers from ${sim} and saved to Cloudflare.`;
         fileInput.value = "";
       } catch (error) {
         status.textContent = error.message || "Failed to parse file.";
@@ -920,6 +1111,9 @@
         await resetData(adminKey);
         const reset = cloneData(DEFAULT_DATA);
         state.events = reset.events;
+        viewState.level = "games";
+        viewState.sim = "";
+        viewState.series = "";
         renderAll(state);
         document.getElementById("uploadStatus").textContent = "Results reset to default data in Cloudflare.";
       } catch (error) {
