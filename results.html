@@ -170,6 +170,23 @@
       background: transparent;
       color: #ff0000;
     }
+    .btn.danger {
+      background: transparent;
+      border-color: #ff0000;
+      color: #ff0000;
+      font-size: 11px;
+      padding: 0.4rem 0.7rem;
+      margin-top: 0.75rem;
+    }
+    .btn.danger:hover {
+      background: #ff0000;
+      color: #fff;
+    }
+    .event-card-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 0.5rem;
+    }
     .upload-help {
       margin-top: 0.8rem;
       color: #888;
@@ -401,6 +418,13 @@
         <div>
           <label for="duration">Duration</label>
           <input id="duration" type="text" placeholder="45 Minutes (or auto from JSON)">
+        </div>
+        <div>
+          <label for="serverType">Server Type</label>
+          <select id="serverType">
+            <option value="split">Split Server (Pro/Pro-AM + AM)</option>
+            <option value="combined">Combined (All Classes)</option>
+          </select>
         </div>
         <div>
           <label for="resultsFile">Results File</label>
@@ -652,6 +676,9 @@
               <div class="podium-row"><span>P2</span><strong>${escapeHtml(podium[1])}</strong></div>
               <div class="podium-row"><span>P3</span><strong>${escapeHtml(podium[2])}</strong></div>
             </div>
+            <div class="event-card-footer">
+              <button class="btn danger delete-event-btn" data-event-index="${eventIndex}" type="button">Delete Event</button>
+            </div>
           </article>
         `;
       });
@@ -660,6 +687,32 @@
         card.addEventListener("click", () => {
           const index = Number.parseInt(card.getAttribute("data-event-index"), 10);
           openEventModal(events[index]);
+        });
+      });
+
+      eventGrid.querySelectorAll(".delete-event-btn").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const adminKey = adminKeyInput.value.trim();
+          if (!adminKey) {
+            document.getElementById("uploadStatus").textContent = "Enter your admin key to delete events.";
+            return;
+          }
+          const index = Number.parseInt(btn.getAttribute("data-event-index"), 10);
+          const ev = state.events[index];
+          if (!ev) return;
+          if (!confirm(`Delete "${ev.eventName}" (Round ${ev.round})? This cannot be undone.`)) return;
+          state.events.splice(index, 1);
+          saveData(state, adminKey)
+            .then(() => {
+              document.getElementById("uploadStatus").textContent = `Deleted "${ev.eventName}".`;
+              renderAll(state);
+            })
+            .catch((err) => {
+              document.getElementById("uploadStatus").textContent = err.message || "Failed to delete event.";
+              state.events.splice(index, 0, ev);
+              renderAll(state);
+            });
         });
       });
     }
@@ -715,67 +768,81 @@
     }
 
     function isSimGridFile(text) {
-      // SimGrid exports are tab-separated with "Race N Result:" in column 1 and JSON in column 2
       const firstLine = text.split("\n")[0] || "";
       return /race\s+\d+\s+result:/i.test(firstLine) && firstLine.includes("\t[");
     }
 
-    function parseSimGridFile(text) {
-      // Returns array of { raceName, rows } — one per race row in the file
-      const MAX_BEST_LAP = 2000000; // filter out sentinel values like 2147483647
+    function parseSimGridFile(text, serverType) {
+      const MAX_BEST_LAP = 2000000;
       const lines = text.replace(/\r/g, "").split("\n").filter(Boolean);
-      const races = [];
+      const events = [];
 
       lines.forEach((line) => {
         const tabIndex = line.indexOf("\t");
         if (tabIndex < 0) return;
-        const label = line.slice(0, tabIndex).trim();           // e.g. "Race 1 Result:"
+        const label = line.slice(0, tabIndex).trim().replace(/result:?$/i, "").trim();
         const jsonStr = line.slice(tabIndex + 1).trim();
         let classes;
         try { classes = JSON.parse(jsonStr); } catch { return; }
         if (!Array.isArray(classes)) return;
 
-        // Flatten all classes into one result list, adding carClass field
-        // Sort overall by totalTime ascending (fastest overall first), DNS/DNF at end
-        const allRows = [];
-        classes.forEach((cls) => {
-          const className = cls.carClass || "Unknown";
-          (cls.result || []).forEach((row) => {
-            const bestLap = (row.bestLap && row.bestLap < MAX_BEST_LAP) ? row.bestLap : null;
-            allRows.push({
-              driver: String(row.id || "").trim(),
-              position: Number(row.position) || 0,
-              carClass: className,
-              carNum: String(row.carNum || ""),
-              car: String(row.car || ""),
-              totalLaps: row.totalLaps ?? "",
-              bestLap: bestLap,
-              totalTime: row.totalTime || null,
-              points: Number(row.pointTotal) || 0,
-              dnf: Boolean(row.dnf),
-              dns: Boolean(row.dns),
-              qualifyingPosition: ""
+        function mapRow(row, className) {
+          const bestLap = (row.bestLap && row.bestLap < MAX_BEST_LAP) ? row.bestLap : null;
+          return {
+            driver: String(row.id || "").trim(),
+            position: Number(row.position) || 0,
+            carClass: className,
+            carNum: String(row.carNum || ""),
+            car: String(row.car || ""),
+            totalLaps: row.totalLaps ?? "",
+            bestLap,
+            totalTime: row.totalTime || null,
+            points: Number(row.pointTotal) || 0,
+            dnf: Boolean(row.dnf),
+            dns: Boolean(row.dns),
+            qualifyingPosition: ""
+          };
+        }
+
+        function sortAndNumber(rows) {
+          rows.sort((a, b) => {
+            if (a.dns && !b.dns) return 1;
+            if (!a.dns && b.dns) return -1;
+            if (a.dnf && !b.dnf) return 1;
+            if (!a.dnf && b.dnf) return -1;
+            return (a.totalTime || 999999999) - (b.totalTime || 999999999);
+          });
+          rows.forEach((r, i) => { r.position = i + 1; });
+          return rows;
+        }
+
+        if (serverType === "combined") {
+          const allRows = [];
+          classes.forEach((cls) => {
+            (cls.result || []).forEach((row) => allRows.push(mapRow(row, cls.carClass || "Unknown")));
+          });
+          events.push({ eventName: label, rows: sortAndNumber(allRows) });
+        } else {
+          // Split: PRO + PRO-AM + PRO Wildcards → one card; AM + AM Wildcards → one card
+          const proRows = [];
+          const amRows = [];
+          classes.forEach((cls) => {
+            const name = (cls.carClass || "").toLowerCase();
+            const isPro = name.includes("pro");
+            const isAmOnly = name.includes("am") && !name.includes("pro");
+            (cls.result || []).forEach((row) => {
+              const mapped = mapRow(row, cls.carClass || "Unknown");
+              if (isPro) proRows.push(mapped);
+              else if (isAmOnly) amRows.push(mapped);
+              else proRows.push(mapped); // unknown class defaults to pro card
             });
           });
-        });
-
-        // Sort: finished drivers by totalTime, then DNF, then DNS
-        allRows.sort((a, b) => {
-          if (a.dns && !b.dns) return 1;
-          if (!a.dns && b.dns) return -1;
-          if (a.dnf && !b.dnf) return 1;
-          if (!a.dnf && b.dnf) return -1;
-          return (a.totalTime || 999999999) - (b.totalTime || 999999999);
-        });
-
-        // Assign overall positions after sort
-        allRows.forEach((row, i) => { row.position = i + 1; });
-
-        const raceName = label.replace(/result:?$/i, "").trim(); // e.g. "Race 1"
-        races.push({ raceName, rows: allRows });
+          if (proRows.length) events.push({ eventName: `${label} — Pro/Pro-AM`, rows: sortAndNumber(proRows) });
+          if (amRows.length) events.push({ eventName: `${label} — AM`, rows: sortAndNumber(amRows) });
+        }
       });
 
-      return races;
+      return events;
     }
 
     function parseResultsText(text) {
@@ -1143,23 +1210,23 @@
         }
         const text = await file.text();
         const isJson = file.name.toLowerCase().endsWith(".json") || file.type.includes("json");
+        const serverType = document.getElementById("serverType").value;
 
         if (isSimGridFile(text)) {
-          // SimGrid: may contain multiple races
-          const races = parseSimGridFile(text);
-          if (!races.length) throw new Error("No races found in SimGrid file.");
+          const simEvents = parseSimGridFile(text, serverType);
+          if (!simEvents.length) throw new Error("No races found in SimGrid file.");
           let baseRound = round;
-          races.forEach((race) => {
+          simEvents.forEach((ev) => {
             const finalEventName = eventNameInput
-              ? (races.length > 1 ? `${eventNameInput} - ${race.raceName}` : eventNameInput)
-              : race.raceName;
+              ? (simEvents.length > 1 ? `${eventNameInput} - ${ev.eventName}` : eventNameInput)
+              : ev.eventName;
             state.events.push({
               sim, series,
               eventName: finalEventName,
               round: baseRound++,
-              duration: durationInput || "",
+              duration: durationInput || "30 Minutes",
               track: "",
-              fullResults: race.rows
+              fullResults: ev.rows
             });
           });
           await saveData(state, adminKey);
@@ -1167,7 +1234,7 @@
           viewState.sim = sim;
           viewState.series = series;
           renderAll(state);
-          status.textContent = `Uploaded ${file.name}. Imported ${races.length} race(s) from SimGrid export.`;
+          status.textContent = `Uploaded ${file.name}. Created ${simEvents.length} event card(s) from SimGrid export.`;
           fileInput.value = "";
         } else {
           const parsed = isJson ? parseResultsJson(text) : parseResultsText(text);
