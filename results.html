@@ -420,15 +420,15 @@
           <input id="duration" type="text" placeholder="45 Minutes (or auto from JSON)">
         </div>
         <div>
+          <label for="resultsFile">Results File</label>
+          <input id="resultsFile" type="file" accept=".csv,.txt,.json,application/json,text/json" required>
+        </div>
+        <div>
           <label for="serverType">Server Type</label>
           <select id="serverType">
             <option value="split">Split Server (Pro/Pro-AM + AM)</option>
             <option value="combined">Combined (All Classes)</option>
           </select>
-        </div>
-        <div>
-          <label for="resultsFile">Results File</label>
-          <input id="resultsFile" type="file" accept=".csv,.txt,.json,application/json,text/json" required>
         </div>
       </div>
       <div class="upload-actions">
@@ -689,7 +689,6 @@
           openEventModal(events[index]);
         });
       });
-
       eventGrid.querySelectorAll(".delete-event-btn").forEach((btn) => {
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
@@ -727,44 +726,6 @@
         renderEventCards(data.events);
       }
       updateSeriesDropdown();
-    }
-
-    function detectDelimiter(headerLine) {
-      const comma = (headerLine.match(/,/g) || []).length;
-      const semicolon = (headerLine.match(/;/g) || []).length;
-      const tab = (headerLine.match(/\t/g) || []).length;
-      if (tab > comma && tab > semicolon) return "\t";
-      if (semicolon > comma) return ";";
-      return ",";
-    }
-
-    function parseCsvLine(line, delimiter = ",") {
-      const values = [];
-      let current = "";
-      let inQuotes = false;
-      for (let i = 0; i < line.length; i += 1) {
-        const ch = line[i];
-        if (ch === '"') {
-          if (inQuotes && line[i + 1] === '"') {
-            current += '"';
-            i += 1;
-          } else {
-            inQuotes = !inQuotes;
-          }
-        } else if (ch === delimiter && !inQuotes) {
-          values.push(current.trim());
-          current = "";
-        } else {
-          current += ch;
-        }
-      }
-      values.push(current.trim());
-      return values;
-    }
-
-    function headerIndex(headers, aliases) {
-      const normalized = headers.map((h) => h.toLowerCase().trim());
-      return normalized.findIndex((h) => aliases.includes(h));
     }
 
     function isSimGridFile(text) {
@@ -810,6 +771,10 @@
             if (!a.dns && b.dns) return -1;
             if (a.dnf && !b.dnf) return 1;
             if (!a.dnf && b.dnf) return -1;
+            // Most laps first, then fastest total time
+            const lapsA = Number(a.totalLaps) || 0;
+            const lapsB = Number(b.totalLaps) || 0;
+            if (lapsB !== lapsA) return lapsB - lapsA;
             return (a.totalTime || 999999999) - (b.totalTime || 999999999);
           });
           rows.forEach((r, i) => { r.position = i + 1; });
@@ -834,7 +799,7 @@
               const mapped = mapRow(row, cls.carClass || "Unknown");
               if (isPro) proRows.push(mapped);
               else if (isAmOnly) amRows.push(mapped);
-              else proRows.push(mapped); // unknown class defaults to pro card
+              else proRows.push(mapped);
             });
           });
           if (proRows.length) events.push({ eventName: `${label} — Pro/Pro-AM`, rows: sortAndNumber(proRows) });
@@ -843,6 +808,44 @@
       });
 
       return events;
+    }
+
+    function detectDelimiter(headerLine) {
+      const comma = (headerLine.match(/,/g) || []).length;
+      const semicolon = (headerLine.match(/;/g) || []).length;
+      const tab = (headerLine.match(/\t/g) || []).length;
+      if (tab > comma && tab > semicolon) return "\t";
+      if (semicolon > comma) return ";";
+      return ",";
+    }
+
+    function parseCsvLine(line, delimiter = ",") {
+      const values = [];
+      let current = "";
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i += 1) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            current += '"';
+            i += 1;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (ch === delimiter && !inQuotes) {
+          values.push(current.trim());
+          current = "";
+        } else {
+          current += ch;
+        }
+      }
+      values.push(current.trim());
+      return values;
+    }
+
+    function headerIndex(headers, aliases) {
+      const normalized = headers.map((h) => h.toLowerCase().trim());
+      return normalized.findIndex((h) => aliases.includes(h));
     }
 
     function parseResultsText(text) {
