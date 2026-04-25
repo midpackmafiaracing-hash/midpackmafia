@@ -28,6 +28,13 @@ function jsonResponse(body, status = 200) {
   });
 }
 
+function isAuthorized(request, env) {
+  const configured = String(env.ADMIN_KEY || "").trim();
+  if (!configured) return false;
+  const provided = String(request.headers.get("x-admin-key") || "").trim();
+  return provided && provided === configured;
+}
+
 function normalizeData(data) {
   if (!data || !Array.isArray(data.events)) {
     return JSON.parse(JSON.stringify(DEFAULT_DATA));
@@ -40,11 +47,13 @@ function normalizeData(data) {
       eventName: String(event.eventName || "").trim(),
       round: Number.isFinite(Number(event.round)) ? Number(event.round) : 1,
       duration: String(event.duration || "").trim(),
+      track: String(event.track || "").trim(),
       fullResults: Array.isArray(event.fullResults)
         ? event.fullResults.map((row) => ({
           position: Number.isFinite(Number(row.position)) ? Number(row.position) : 0,
           driver: String(row.driver || "").trim(),
           carNum: String(row.carNum || "").trim(),
+          qualifyingPosition: Number.isFinite(Number(row.qualifyingPosition)) ? Number(row.qualifyingPosition) : null,
           car: String(row.car || "").trim(),
           totalLaps: row.totalLaps ?? "",
           bestLap: row.bestLap ?? "",
@@ -99,6 +108,9 @@ export async function onRequestPost(context) {
   if (!env.RESULTS_KV) {
     return jsonResponse({ error: "Missing RESULTS_KV binding in Cloudflare config." }, 500);
   }
+  if (!isAuthorized(request, env)) {
+    return jsonResponse({ error: "Unauthorized. Invalid or missing admin key." }, 401);
+  }
 
   try {
     const body = await request.json();
@@ -111,9 +123,12 @@ export async function onRequestPost(context) {
 }
 
 export async function onRequestDelete(context) {
-  const { env } = context;
+  const { env, request } = context;
   if (!env.RESULTS_KV) {
     return jsonResponse({ error: "Missing RESULTS_KV binding in Cloudflare config." }, 500);
+  }
+  if (!isAuthorized(request, env)) {
+    return jsonResponse({ error: "Unauthorized. Invalid or missing admin key." }, 401);
   }
 
   try {
