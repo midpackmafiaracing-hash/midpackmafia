@@ -733,6 +733,76 @@
       return /race\s+\d+\s+result:/i.test(firstLine) && firstLine.includes("\t[");
     }
 
+    function isIRacingCsv(text) {
+      // iRacing CSVs have metadata rows then a "Fin Pos" header row
+      return text.includes('"Fin Pos"') || text.includes('"Fin Pos",');
+    }
+
+    function parseIRacingCsv(text) {
+      const lines = text.replace(/\r/g, "").split("\n");
+
+      // Find the header row containing "Fin Pos"
+      let headerLineIndex = lines.findIndex((l) => l.includes('"Fin Pos"'));
+      if (headerLineIndex < 0) throw new Error("Could not find results header row in iRacing CSV.");
+
+      // Extract track from metadata (row 2, column 2)
+      let track = "";
+      try {
+        const metaRow = lines[1];
+        const metaCols = parseCsvLine(metaRow, ",");
+        track = metaCols[1] ? metaCols[1].replace(/ - .*/, "").trim() : ""; // strip variant suffix
+      } catch { /* ignore */ }
+
+      const headers = parseCsvLine(lines[headerLineIndex], ",").map((h) => h.trim());
+
+      function col(name) {
+        return headers.findIndex((h) => h.toLowerCase() === name.toLowerCase());
+      }
+
+      const posIdx    = col("Fin Pos");
+      const nameIdx   = col("Name");
+      const carIdx    = col("Car");
+      const carNumIdx = col("Car #");
+      const lapsIdx   = col("Laps Comp");
+      const bestIdx   = col("Fastest Lap Time");
+      const startIdx  = col("Start Pos");
+      const outIdx    = col("Out");
+      const ptsIdx    = col("League Points");
+
+      const results = [];
+      for (let i = headerLineIndex + 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        const cols = parseCsvLine(line, ",");
+        const position = Number.parseInt(cols[posIdx] || "", 10);
+        const driver = (cols[nameIdx] || "").trim();
+        if (!driver || !Number.isFinite(position) || position <= 0) continue;
+
+        const outStatus = (cols[outIdx] || "").trim().toLowerCase();
+        const dnf = outStatus !== "running" && outStatus !== "";
+        const dns = outStatus === "dns";
+
+        results.push({
+          position,
+          driver,
+          carClass: "",
+          car: (cols[carIdx] || "").trim(),
+          carNum: (cols[carNumIdx] || "").trim(),
+          totalLaps: (cols[lapsIdx] || "").trim(),
+          bestLap: (cols[bestIdx] || "").trim(),
+          totalTime: null,
+          points: Number.parseInt(cols[ptsIdx] || "0", 10) || 0,
+          qualifyingPosition: (cols[startIdx] || "").trim(),
+          dnf,
+          dns
+        });
+      }
+
+      if (!results.length) throw new Error("No valid rows found in iRacing CSV.");
+      results.sort((a, b) => a.position - b.position);
+      return { rows: results, meta: { track } };
+    }
+
     function parseSimGridFile(text, serverType) {
       const MAX_BEST_LAP = 2000000;
       const lines = text.replace(/\r/g, "").split("\n").filter(Boolean);
@@ -771,7 +841,6 @@
             if (!a.dns && b.dns) return -1;
             if (a.dnf && !b.dnf) return 1;
             if (!a.dnf && b.dnf) return -1;
-            // Most laps first, then fastest total time
             const lapsA = Number(a.totalLaps) || 0;
             const lapsB = Number(b.totalLaps) || 0;
             if (lapsB !== lapsA) return lapsB - lapsA;
@@ -788,7 +857,6 @@
           });
           events.push({ eventName: label, rows: sortAndNumber(allRows) });
         } else {
-          // Split: PRO + PRO-AM + PRO Wildcards → one card; AM + AM Wildcards → one card
           const proRows = [];
           const amRows = [];
           classes.forEach((cls) => {
@@ -1117,7 +1185,7 @@
             <td>${escapeHtml(row.carNum || "-")}</td>
             <td>${escapeHtml(row.car || "-")}</td>
             <td>${escapeHtml(row.totalLaps || "-")}</td>
-            <td>${escapeHtml(formatMs(row.bestLap))}</td>
+            <td>${escapeHtml(row.bestLap || "-")}</td>
             <td>${escapeHtml(formatMs(row.totalTime))}</td>
             <td>${status}</td>
           </tr>
@@ -1216,6 +1284,7 @@
         const serverType = document.getElementById("serverType").value;
 
         if (isSimGridFile(text)) {
+          // SimGrid export — split or combined
           const simEvents = parseSimGridFile(text, serverType);
           if (!simEvents.length) throw new Error("No races found in SimGrid file.");
           let baseRound = round;
@@ -1239,7 +1308,30 @@
           renderAll(state);
           status.textContent = `Uploaded ${file.name}. Created ${simEvents.length} event card(s) from SimGrid export.`;
           fileInput.value = "";
+
+        } else if (!isJson && isIRacingCsv(text)) {
+          // iRacing hosted session CSV
+          const parsed = parseIRacingCsv(text);
+          const finalEventName = eventNameInput || parsed.meta.track || `Round ${round}`;
+          const finalDuration = durationInput || parsed.meta.duration || "";
+          state.events.push({
+            sim, series,
+            eventName: finalEventName,
+            round,
+            duration: finalDuration,
+            track: parsed.meta.track || "",
+            fullResults: parsed.rows
+          });
+          await saveData(state, adminKey);
+          viewState.level = "events";
+          viewState.sim = sim;
+          viewState.series = series;
+          renderAll(state);
+          status.textContent = `Uploaded ${file.name}. Parsed ${parsed.rows.length} drivers from iRacing CSV and saved to Cloudflare.`;
+          fileInput.value = "";
+
         } else {
+          // Standard CSV/TXT or iRacing JSON
           const parsed = isJson ? parseResultsJson(text) : parseResultsText(text);
           const finalEventName = eventNameInput || parsed.meta.track || `Round ${round}`;
           const finalDuration = durationInput || parsed.meta.duration || "";
