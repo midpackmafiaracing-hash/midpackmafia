@@ -17,6 +17,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      position: relative;
+      z-index: 100;
     }
     .nav-wordmark {
       font-family: 'Saira', sans-serif;
@@ -39,6 +41,69 @@
       text-transform: uppercase;
     }
     .nav-links a:hover, .nav-links a.active { color: #ff0000; }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+      z-index: 200;
+    }
+    .hamburger span {
+      display: block;
+      width: 26px;
+      height: 3px;
+      background: #fff;
+      transition: all 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 80px;
+      left: 0;
+      right: 0;
+      background: #000;
+      border-bottom: 3px solid #ff0000;
+      z-index: 99;
+      flex-direction: column;
+      padding: 1rem 0;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'Saira', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #fff;
+      text-decoration: none;
+      padding: 1rem 2.5rem;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu a:hover, .mobile-menu a.active { color: #ff0000; }
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 98;
+    }
+    .mobile-overlay.open { display: block; }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 1.5rem; }
+      .nav-wordmark { font-size: 24px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+    }
 
     .hero {
       background: #000;
@@ -191,10 +256,25 @@
     <li><a href="index.html" class="active">Home</a></li>
     <li><a href="drivers.html">Drivers</a></li>
     <li><a href="series.html">Series</a></li>
+    <li><a href="results.html">Results</a></li>
     <li><a href="media.html">Links</a></li>
     <li><a href="calendar.html">Calendar</a></li>
   </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <a href="index.html" class="active">Home</a>
+  <a href="drivers.html">Drivers</a>
+  <a href="series.html">Series</a>
+  <a href="results.html">Results</a>
+  <a href="media.html">Links</a>
+  <a href="calendar.html">Calendar</a>
+</div>
+
+<div class="mobile-overlay" id="mobile-overlay"></div>
 
 <section class="hero">
   <img class="hero-logo" src="/images/Logo_transparent.png" alt="Mid Pack Mafia Logo">
@@ -250,5 +330,21 @@
   <div class="footer-tagline">Respect the Process. Fear the Results.</div>
 </footer>
 
+
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const overlay = document.getElementById('mobile-overlay');
+
+  function toggleMenu() {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+    overlay.classList.toggle('open');
+    document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+  }
+
+  hamburger.addEventListener('click', toggleMenu);
+  overlay.addEventListener('click', toggleMenu);
+</script>
 </body>
 </html>
