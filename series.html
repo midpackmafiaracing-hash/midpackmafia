@@ -89,6 +89,7 @@
     }
     .mobile-menu a:last-child { border-bottom: none; }
     .mobile-menu a:hover, .mobile-menu a.active { color: #ff0000; }
+
     .mobile-overlay {
       display: none;
       position: fixed;
@@ -143,88 +144,179 @@
       line-height: 1.7;
     }
 
-    .series-wrap {
+    .series-grid {
       max-width: 1100px;
       margin: 3rem auto;
       padding: 0 2.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 24px;
     }
 
     .series-card {
       background: #0a0a0a;
       border: 1px solid #1a1a1a;
-      border-left: 3px solid #ff0000;
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      min-height: 180px;
+      border-top: 3px solid #ff0000;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .series-card:hover {
+      transform: translateY(-6px);
+      background: #111;
     }
 
-    .series-logo-panel {
-      background: #000;
-      border-right: 1px solid #1a1a1a;
-      display: flex;
+    .series-card img {
+      width: 100%;
+      max-height: 100px;
+      object-fit: contain;
+      margin-bottom: 1.25rem;
+    }
+    .series-card-name {
+      font-family: 'Saira', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      text-transform: uppercase;
+      color: #fff;
+      letter-spacing: 0.05em;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+    .series-card-platform {
+      font-family: 'Saira', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #ff0000;
+    }
+    .series-card-cta {
+      font-family: 'Saira', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #333;
+      margin-top: 1rem;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 1000;
       align-items: center;
       justify-content: center;
       padding: 2rem;
     }
-    .series-logo-panel img {
-      max-width: 160px;
-      max-height: 120px;
-      object-fit: contain;
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #0a0a0a;
+      border: 1px solid #1a1a1a;
+      border-top: 3px solid #ff0000;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
     }
 
-    .series-body {
-      padding: 1.75rem 2rem;
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1.25rem;
+      font-family: 'Saira', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: #555;
+      cursor: pointer;
+      background: none;
+      border: none;
+      line-height: 1;
+      z-index: 10;
+    }
+    .modal-close:hover { color: #ff0000; }
+
+    .modal-header {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      gap: 1rem;
+      align-items: center;
+      padding: 2.5rem 2rem 1.5rem;
+      border-bottom: 1px solid #1a1a1a;
+      text-align: center;
     }
-
-    .series-name {
+    .modal-logo {
+      max-width: 180px;
+      max-height: 100px;
+      object-fit: contain;
+      margin-bottom: 1.25rem;
+    }
+    .modal-name {
       font-family: 'Saira', sans-serif;
       font-weight: 800;
       font-size: 24px;
       text-transform: uppercase;
       color: #fff;
-      margin-bottom: 0.4rem;
       line-height: 1.1;
+      margin-bottom: 6px;
     }
-    .series-platform {
+    .modal-platform {
       font-family: 'Saira', sans-serif;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 13px;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: #ff0000;
-      margin-bottom: 0.75rem;
     }
-    .series-meta {
+
+    .modal-body { padding: 1.5rem 2rem; }
+    .modal-desc {
       font-family: 'Saira', sans-serif;
       font-weight: 400;
       font-size: 15px;
+      color: #aaa;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+    .modal-meta {
+      font-family: 'Saira', sans-serif;
+      font-weight: 400;
+      font-size: 14px;
       color: #666;
+      margin-bottom: 1.5rem;
       line-height: 1.7;
     }
-    .series-meta strong { color: #999; font-weight: 700; }
+    .modal-meta strong { color: #fff; font-weight: 700; }
 
-    .series-links { display: flex; gap: 10px; flex-wrap: wrap; }
-    .series-btn {
+    .modal-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .modal-btn {
       font-family: 'Saira', sans-serif;
       font-weight: 700;
       font-size: 13px;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      padding: 10px 22px;
+      padding: 12px 20px;
       text-decoration: none;
-      display: inline-block;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.2s;
     }
-    .series-btn-primary { background: #ff0000; color: #fff; }
-    .series-btn-primary:hover { background: #cc0000; }
-    .series-btn-secondary { background: transparent; color: #fff; border: 1px solid #333; }
-    .series-btn-secondary:hover { border-color: #ff0000; color: #ff0000; }
+    .modal-btn-primary { background: #ff0000; color: #fff; }
+    .modal-btn-primary:hover { background: #cc0000; }
+    .modal-btn-secondary { background: transparent; color: #fff; border: 1px solid #333; }
+    .modal-btn-secondary:hover { border-color: #ff0000; color: #ff0000; }
 
     footer {
       background: #000;
@@ -262,7 +354,6 @@
     <li><a href="index.html">Home</a></li>
     <li><a href="drivers.html">Drivers</a></li>
     <li><a href="series.html" class="active">Series</a></li>
-    <li><a href="results.html">Results</a></li>
     <li><a href="media.html">Links</a></li>
     <li><a href="calendar.html">Calendar</a></li>
   </ul>
@@ -275,11 +366,9 @@
   <a href="index.html">Home</a>
   <a href="drivers.html">Drivers</a>
   <a href="series.html" class="active">Series</a>
-  <a href="results.html">Results</a>
   <a href="media.html">Links</a>
   <a href="calendar.html">Calendar</a>
 </div>
-
 <div class="mobile-overlay" id="mobile-overlay"></div>
 
 <div class="page-header">
@@ -290,93 +379,60 @@
   </div>
 </div>
 
-<div class="series-wrap">
+<div class="series-grid">
 
-  <div class="series-card">
-    <div class="series-logo-panel">
-      <img src="/images/series/New%20Series%20Logo.png" alt="TrakFiends x Mid Pack Mafia">
-    </div>
-    <div class="series-body">
-      <div>
-        <div class="series-name">TrakFiends x Mid Pack Mafia</div>
-        <div class="series-platform">iRacing Series</div>
-        <div class="series-meta"><strong>League #:</strong> 14276 &nbsp;&mdash;&nbsp; A collaborative iRacing series bringing both communities together for organized, hard-fought competition.</div>
-      </div>
-      <div class="series-links">
-        <a class="series-btn series-btn-primary" href="https://discord.gg/pQ6NEcF6PN" target="_blank">MPM Discord</a>
-        <a class="series-btn series-btn-secondary" href="https://discord.gg/8CSRuTJgqy" target="_blank">TrakFiends Discord</a>
-      </div>
-    </div>
+  <div class="series-card" onclick="openModal('trakfiends-mpm')">
+    <img src="/images/series/New%20Series%20Logo.png" alt="TrakFiends x Mid Pack Mafia">
+    <div class="series-card-name">TrakFiends x Mid Pack Mafia</div>
+    <div class="series-card-platform">iRacing Series</div>
+    <div class="series-card-cta">Click for info &rsaquo;</div>
   </div>
 
-  <div class="series-card">
-    <div class="series-logo-panel">
-      <img src="/images/series/NRUS%20Color.png" alt="Noobs R Us">
-    </div>
-    <div class="series-body">
-      <div>
-        <div class="series-name">Noobs "R" Us</div>
-        <div class="series-platform">ACC &amp; LMU Series</div>
-        <div class="series-meta">SimGrid-hosted events giving MPM drivers a strong home for structured ACC and LMU racing in an established, welcoming community.</div>
-      </div>
-      <div class="series-links">
-        <a class="series-btn series-btn-primary" href="https://www.thesimgrid.com/communities/noobs-r-us" target="_blank">SimGrid</a>
-        <a class="series-btn series-btn-secondary" href="https://discord.gg/pJTjeNffUq" target="_blank">NRUS Discord</a>
-      </div>
-    </div>
+  <div class="series-card" onclick="openModal('nrus')">
+    <img src="/images/series/NRUS%20Color.png" alt="Noobs R Us">
+    <div class="series-card-name">Noobs "R" Us</div>
+    <div class="series-card-platform">ACC &amp; LMU Series</div>
+    <div class="series-card-cta">Click for info &rsaquo;</div>
   </div>
 
-  <div class="series-card">
-    <div class="series-logo-panel">
-      <img src="/images/series/logo.png" alt="TrakFiends">
-    </div>
-    <div class="series-body">
-      <div>
-        <div class="series-name">TrakFiends</div>
-        <div class="series-platform">ACC &amp; iRacing Series</div>
-        <div class="series-meta">Beyond the joint MPM series, TrakFiends is a standalone community offering competitive ACC and iRacing events with regular crossover opportunities for MPM drivers.</div>
-      </div>
-      <div class="series-links">
-        <a class="series-btn series-btn-primary" href="https://www.thesimgrid.com/communities/trakfiends" target="_blank">SimGrid</a>
-        <a class="series-btn series-btn-secondary" href="https://discord.gg/8CSRuTJgqy" target="_blank">TrakFiends Discord</a>
-      </div>
-    </div>
+  <div class="series-card" onclick="openModal('trakfiends')">
+    <img src="/images/series/logo.png" alt="TrakFiends">
+    <div class="series-card-name">TrakFiends</div>
+    <div class="series-card-platform">ACC &amp; iRacing Series</div>
+    <div class="series-card-cta">Click for info &rsaquo;</div>
   </div>
 
-  <div class="series-card">
-    <div class="series-logo-panel">
-      <img src="/images/series/Regiment_Name_HD.png" alt="Regiment Gaming">
-    </div>
-    <div class="series-body">
-      <div>
-        <div class="series-name">Regiment Gaming</div>
-        <div class="series-platform">iRacing Series</div>
-        <div class="series-meta">An organized iRacing community that expands the MPM competitive schedule and gives drivers another strong league environment to race in throughout the season.</div>
-      </div>
-      <div class="series-links">
-        <a class="series-btn series-btn-primary" href="https://regiment.gg/" target="_blank">Website</a>
-        <a class="series-btn series-btn-secondary" href="https://discord.gg/regiment" target="_blank">Regiment Discord</a>
-      </div>
-    </div>
+  <div class="series-card" onclick="openModal('regiment')">
+    <img src="/images/series/Regiment_Name_HD.png" alt="Regiment Gaming">
+    <div class="series-card-name">Regiment Gaming</div>
+    <div class="series-card-platform">iRacing Series</div>
+    <div class="series-card-cta">Click for info &rsaquo;</div>
   </div>
 
-  <div class="series-card">
-    <div class="series-logo-panel" style="background:#111;">
-      <img src="/images/series/TRACKILICIOUS%20Logo%20Shadow%20Orange.png" alt="Trackilicious">
-    </div>
-    <div class="series-body">
-      <div>
-        <div class="series-name">Trackilicious</div>
-        <div class="series-platform">ACC, LMU &amp; iRacing Series</div>
-        <div class="series-meta">A broad multi-platform community offering series across ACC, LMU, and iRacing — a versatile outlet for MPM drivers who want variety in their racing schedule.</div>
-      </div>
-      <div class="series-links">
-        <a class="series-btn series-btn-primary" href="https://www.thesimgrid.com/communities/trackilicious" target="_blank">SimGrid</a>
-        <a class="series-btn series-btn-secondary" href="https://discord.gg/qhZT24GD" target="_blank">Trackilicious Discord</a>
-      </div>
-    </div>
+  <div class="series-card" onclick="openModal('trackilicious')" style="background:#111;">
+    <img src="/images/series/TRACKILICIOUS%20Logo%20Shadow%20Orange.png" alt="Trackilicious">
+    <div class="series-card-name">Trackilicious</div>
+    <div class="series-card-platform">ACC, LMU &amp; iRacing</div>
+    <div class="series-card-cta">Click for info &rsaquo;</div>
   </div>
 
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <button class="modal-close" id="modal-close">&#x2715;</button>
+    <div class="modal-header">
+      <img class="modal-logo" id="modal-logo" src="" alt="">
+      <div class="modal-name" id="modal-name"></div>
+      <div class="modal-platform" id="modal-platform"></div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-desc" id="modal-desc"></div>
+      <div class="modal-meta" id="modal-meta"></div>
+      <div class="modal-links" id="modal-links"></div>
+    </div>
+  </div>
 </div>
 
 <footer>
@@ -384,8 +440,94 @@
   <div class="footer-tagline">Respect the Process. Fear the Results.</div>
 </footer>
 
-
 <script>
+  const SERIES = {
+    'trakfiends-mpm': {
+      logo: '/images/series/New%20Series%20Logo.png',
+      name: 'TrakFiends x Mid Pack Mafia',
+      platform: 'iRacing Series',
+      desc: 'A collaborative iRacing series bringing both communities together for organized, hard-fought competition on some of the best circuits in sim racing.',
+      meta: '<strong>League #:</strong> 14276',
+      links: [
+        { label: 'MPM Discord', url: 'https://discord.gg/pQ6NEcF6PN', primary: true },
+        { label: 'TrakFiends Discord', url: 'https://discord.gg/8CSRuTJgqy', primary: false }
+      ]
+    },
+    'nrus': {
+      logo: '/images/series/NRUS%20Color.png',
+      name: 'Noobs "R" Us',
+      platform: 'ACC &amp; LMU Series',
+      desc: 'SimGrid-hosted events giving MPM drivers a strong home for structured ACC and LMU racing in an established, welcoming community.',
+      meta: '',
+      links: [
+        { label: 'SimGrid', url: 'https://www.thesimgrid.com/communities/noobs-r-us', primary: true },
+        { label: 'NRUS Discord', url: 'https://discord.gg/pJTjeNffUq', primary: false }
+      ]
+    },
+    'trakfiends': {
+      logo: '/images/series/logo.png',
+      name: 'TrakFiends',
+      platform: 'ACC &amp; iRacing Series',
+      desc: 'Beyond the joint MPM series, TrakFiends is a standalone community offering competitive ACC and iRacing events with regular crossover opportunities for MPM drivers.',
+      meta: '',
+      links: [
+        { label: 'SimGrid', url: 'https://www.thesimgrid.com/communities/trakfiends', primary: true },
+        { label: 'TrakFiends Discord', url: 'https://discord.gg/8CSRuTJgqy', primary: false }
+      ]
+    },
+    'regiment': {
+      logo: '/images/series/Regiment_Name_HD.png',
+      name: 'Regiment Gaming',
+      platform: 'iRacing Series',
+      desc: 'An organized iRacing community that expands the MPM competitive schedule and gives drivers another strong league environment to race in throughout the season.',
+      meta: '',
+      links: [
+        { label: 'Website', url: 'https://regiment.gg/', primary: true },
+        { label: 'Regiment Discord', url: 'https://discord.gg/regiment', primary: false }
+      ]
+    },
+    'trackilicious': {
+      logo: '/images/series/TRACKILICIOUS%20Logo%20Shadow%20Orange.png',
+      name: 'Trackilicious',
+      platform: 'ACC, LMU &amp; iRacing Series',
+      desc: 'A broad multi-platform community offering series across ACC, LMU, and iRacing — a versatile outlet for MPM drivers who want variety in their racing schedule.',
+      meta: '',
+      links: [
+        { label: 'SimGrid', url: 'https://www.thesimgrid.com/communities/trackilicious', primary: true },
+        { label: 'Trackilicious Discord', url: 'https://discord.gg/qhZT24GD', primary: false }
+      ]
+    }
+  };
+
+  function openModal(id) {
+    const s = SERIES[id];
+    if (!s) return;
+    document.getElementById('modal-logo').src = s.logo;
+    document.getElementById('modal-logo').alt = s.name;
+    document.getElementById('modal-name').textContent = s.name;
+    document.getElementById('modal-platform').innerHTML = s.platform;
+    document.getElementById('modal-desc').textContent = s.desc;
+    document.getElementById('modal-meta').innerHTML = s.meta;
+    const linksEl = document.getElementById('modal-links');
+    linksEl.innerHTML = s.links.map(l =>
+      `<a class="modal-btn ${l.primary ? 'modal-btn-primary' : 'modal-btn-secondary'}" href="${l.url}" target="_blank">
+        <span>${l.label}</span><span>&rsaquo;</span>
+      </a>`
+    ).join('');
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('modal-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  });
+
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobile-menu');
   const overlay = document.getElementById('mobile-overlay');
@@ -400,5 +542,6 @@
   hamburger.addEventListener('click', toggleMenu);
   overlay.addEventListener('click', toggleMenu);
 </script>
+
 </body>
 </html>
